@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "es2022",
+		"target": "ES2022",
+		"outDir": "dist",
+		"lib": [
+			"ES2022"
+		],
+		"sourceMap": true,
+		"rootDir": "src",
+		"strict": true,
+		"strictNullChecks": true,
+		"alwaysStrict": true,
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"jsx": "react",
+		"allowJs": true,
+		"allowSyntheticDefaultImports": true,
+		"allowUnreachableCode": false,
+		"useUnknownInCatchVariables": true
+	}
+}
