@@ -1,3 +1,10 @@
+/**
+ * This module implements `colrm` functionality with correct emoji widths
+ * (unlike `colrm` in macOS 12.6).
+ *
+ * The functionality is adapted from `sindresorhus/string-width`.
+ */
+
 import stripAnsi from 'strip-ansi';
 import eastAsianWidth from 'eastasianwidth';
 import emojiRegex from 'emoji-regex';

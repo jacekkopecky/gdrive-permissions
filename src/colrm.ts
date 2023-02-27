@@ -1,3 +1,8 @@
+/**
+ * This CLI tool implements `colrm` functionality with correct emoji widths
+ * (unlike `colrm` in macOS 12.6).
+ */
+
 import { colrmWidth } from './lib/colrm-width.js';
 import readline from 'readline';
 
