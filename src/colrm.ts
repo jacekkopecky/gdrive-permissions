@@ -1,4 +1,4 @@
-import { colrmWidth } from './colrm-width.js';
+import { colrmWidth } from './lib/colrm-width.js';
 import readline from 'readline';
 
 const start = Number(process.argv[2]) || undefined;

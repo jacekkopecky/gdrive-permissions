@@ -1,4 +1,4 @@
-import { readColFile } from './read-col-file.js';
+import { readColFile } from './lib/read-col-file.js';
 
 const file = process.argv[2];
 if (!file) {
