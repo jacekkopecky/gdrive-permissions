@@ -1,11 +1,32 @@
+/**
+ * This module reads files output by the `gdrive` tool formatted in columns.
+ */
+
 import fs from 'fs';
 import readline from 'readline';
 import eastAsianWidth from 'eastasianwidth';
 import emojiRegex from 'emoji-regex';
+import { ReadFileOptions } from './types.js';
 
 const emoji = emojiRegex();
 
-export async function readColFile(filename: string): Promise<Record<string, string>[]> {
+export async function readColFiles(
+  filenames: string[],
+  opts?: ReadFileOptions
+): Promise<Record<string, string>[]> {
+  const results = await Promise.all(filenames.map((filename) => readColFile(filename, opts)));
+  return results.flat();
+}
+
+export async function readColFile(
+  filename: string,
+  opts?: ReadFileOptions
+): Promise<Record<string, string>[]> {
+  const options: ReadFileOptions = {
+    lowercasePropertyNames: true,
+    ...opts,
+  };
+
   const fileStream = fs.createReadStream(filename);
 
   const rl = readline.createInterface({
@@ -19,8 +40,7 @@ export async function readColFile(filename: string): Promise<Record<string, stri
   for await (const line of rl) {
     if (columns.length === 0) {
       // reading first line
-      computeColumns(line, columns);
-      console.log(columns);
+      computeColumns(line, columns, options.lowercasePropertyNames);
     } else {
       const lineData = splitLine(line, columns);
       if (lineData) retval.push(lineData);
@@ -30,12 +50,14 @@ export async function readColFile(filename: string): Promise<Record<string, stri
   return retval;
 }
 
-function computeColumns(line: string, columnsArray: ColumnDefinition[]) {
+function computeColumns(line: string, columnsArray: ColumnDefinition[], lowercase?: boolean) {
   for (const header of line.matchAll(/\S+\s*/g)) {
     if (header.index != null) {
+      const rawName = header[0].trim();
+      const name = lowercase ? rawName.toLowerCase() : rawName;
       columnsArray.push({
         start: header.index,
-        name: header[0].trim(),
+        name,
       });
     }
   }
