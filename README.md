@@ -66,5 +66,8 @@ Functionalities:
 - [x] list all known files
 - [ ] for a given [email] and [role], list files where that email has that role
   - folders may or may not have the role, how do we show that?
-- [ ] for a given role, list files where "anyone" has that role
-- [ ] for a given email, list files where that user has any role
+  - maybe by having an extra line as first inside the folder (if it matches)
+  - every matching line should have an ID, somehow specially formatted
+- [ ] for a given role and email "anyone", list files where "anyone" has that role
+- [ ] for a given email, list files where that user has any role, with the role
+- [ ] given a trimmed file (with removed lines) listed like above, remove email and or role
