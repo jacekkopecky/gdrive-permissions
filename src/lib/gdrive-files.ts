@@ -6,10 +6,23 @@ import fs from 'fs/promises';
 import path from 'path';
 import { readColFile } from './read-col-file.js';
 import { readLineFile } from './read-line-file.js';
+import {
+  CoreFile,
+  File,
+  InfoFile,
+  isFile,
+  isInfoFile,
+  isPermission,
+  isPermissions,
+  Permission,
+} from './types.js';
 
 const FILES_DIR = '.gdrive-permissions';
 const LS_FILE_RE = /(?:^|\/)ls-(.*)\.dir$/;
 const INFO_FILE_RE = /(?:^|\/)info-(.*)\.txt$/;
+function PERM_FILE(id: string) {
+  return path.join(FILES_DIR, `perm-${id}.txt`);
+}
 
 /**
  * Read **all** the ls-*.dir files and return an array of the files and folders listed there.
@@ -48,11 +61,27 @@ export async function readInfoFiles(): Promise<InfoFile[]> {
       if (id !== record.id) {
         console.warn(`file ID inside doesn't match filename: ${fileName} `);
       }
+      record.permissions = await readPermissions(record);
     } else {
       console.warn('skipping file record due to bad structure', record);
     }
   }
   return retval;
+}
+
+async function readPermissions(file: InfoFile): Promise<Permission[] | undefined> {
+  try {
+    const records = await readColFile(PERM_FILE(file.id));
+    if (records.length === 0) {
+      console.warn(`error: no permissions in file ${PERM_FILE(file.id)}`);
+    } else if (isPermissions(records)) {
+      return records;
+    } else {
+      console.warn(`error in permissions file ${PERM_FILE(file.id)}`);
+    }
+  } catch (e) {
+    console.warn(`error reading permissions file ${PERM_FILE(file.id)}`);
+  }
 }
 
 export function makeHierarchy<T extends CoreFile<T>>(files: T[]): T[] {
@@ -88,54 +117,6 @@ export function makeHierarchy<T extends CoreFile<T>>(files: T[]): T[] {
 async function listFiles(pattern: RegExp): Promise<string[]> {
   const files = await fs.readdir(FILES_DIR);
   return files.filter((name) => pattern.test(name)).map((name) => path.join(FILES_DIR, name));
-}
-
-export interface CoreFile<T extends CoreFile<T>> {
-  id: string;
-  name: string;
-  created: string;
-  parent?: string;
-  children?: T[];
-}
-
-function isCoreFile<T extends CoreFile<T>>(
-  record: Record<string, unknown>
-): record is CoreFile<T> & Record<string, unknown> {
-  return 'id' in record && 'name' in record && 'created' in record;
-}
-
-export interface File extends CoreFile<File> {
-  type: 'folder' | 'regular' | 'document';
-  size: string;
-}
-
-function isFile(record: Record<string, string>): record is File & Record<string, string> {
-  return (
-    isCoreFile(record) &&
-    'type' in record &&
-    'size' in record &&
-    ['folder', 'regular', 'document'].includes(record.type)
-  );
-}
-
-export interface InfoFile extends CoreFile<InfoFile> {
-  mime: string;
-  size?: string;
-  modified: string;
-  md5?: string;
-  shared: string;
-  parents?: string;
-  viewurl: string;
-}
-
-function isInfoFile(record: Record<string, string>): record is InfoFile & Record<string, string> {
-  return (
-    isCoreFile(record) &&
-    'mime' in record &&
-    'modified' in record &&
-    'shared' in record &&
-    'viewurl' in record
-  );
 }
 
 function compareFiles<T extends CoreFile<T>>(a: T, b: T): number {

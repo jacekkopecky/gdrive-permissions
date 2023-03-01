@@ -4,16 +4,53 @@
  * Use `gdrivep --help` for usage instructions.
  */
 
+/*
+
+--list-emails (-e)
+--list-files-with-permission (-l) (email | "anyone") [role]
+
+- [ ] for a given [email] and [role], list files where that email has that role
+  - every matching line should have an ID, somehow specially formatted
+  - folders may or may not have the role, how do we show that?
+  - maybe by listing the folders without the ID
+- [ ] for a given role and email "anyone", list files where "anyone" has that role
+- [ ] for a given email, list files where that user has any role, with the role
+- [ ] given a trimmed file (with removed lines) listed like above, remove email and or role
+
+*/
+
 import archy from './lib/archy.js';
-import { CoreFile, makeHierarchy, readInfoFiles } from './lib/gdrive-files.js';
-// import fs from 'fs/promises';
+import { makeHierarchy, readInfoFiles } from './lib/gdrive-files.js';
+import { CoreFile, InfoFile, PermissionRolesArray } from './lib/types.js';
 
-const data2 = await readInfoFiles();
-console.log(data2.length, data2.slice(-2));
-const h2 = makeHierarchy(data2);
-console.log(h2.length);
+const ANYONE = 'anyone';
 
-printHierarchy(h2);
+interface Options {
+  email?: string;
+  role?: string;
+}
+
+async function main(opts: Options) {
+  const files = await readInfoFiles();
+  console.log(files.length, 'files');
+
+  annotateNoPermissions(files);
+
+  const hierarchy = makeHierarchy(files);
+  const filtered = filterMatchingChildren(hierarchy, matcherByOptions(opts));
+
+  printHierarchy(filtered);
+}
+
+await main(getCliOptions());
+
+function getCliOptions() {
+  const args = process.argv.slice(2);
+  const email = args.find((str) => str.includes('@') || str === ANYONE);
+  if (!email) throw new Error('need an email or "anyone"');
+  const role = args.find((str) => str != null && PermissionRolesArray.includes(str));
+  return { email, role };
+}
 
 function printHierarchy<T extends CoreFile<T>>(roots: T[]): void {
   for (const root of roots) {
@@ -21,7 +58,47 @@ function printHierarchy<T extends CoreFile<T>>(roots: T[]): void {
   }
 }
 
-// async function saveHierarchy<T extends CoreFile<T>>(roots: T[], filename: string): void {
-//   const all = roots.map((root) => archy(root)).join('\n');
-//   await fs.writeFile(filename, all, 'utf8');
-// }
+function annotateNoPermissions(files: InfoFile[]): void {
+  for (const file of files) {
+    if (file.permissions == null || file.permissions.length === 0) {
+      file.name += '  (🔴⚠️  NO PERMISSIONS)';
+    }
+  }
+}
+
+function filterMatchingChildren(
+  files: InfoFile[],
+  matcher: (file: InfoFile) => boolean
+): InfoFile[] {
+  const retval = [];
+  for (const file of files) {
+    const fileMatches = matcher(file);
+    const childrenMatches = file.children && filterMatchingChildren(file.children, matcher);
+    if (fileMatches || childrenMatches?.length) {
+      retval.push({
+        ...file,
+        name: fileMatches ? file.name : '(only children match in:) ' + file.name,
+        children: childrenMatches,
+      });
+    }
+  }
+  return retval;
+}
+
+function matcherByOptions(opts: Options) {
+  console.log(
+    `matching files where ${opts.email || '"anyone with the link"'} has permission ${
+      opts.role ? `role ${opts.role}` : 'in any role'
+    }`
+  );
+
+  return (file: InfoFile): boolean => {
+    return (
+      file.permissions?.some(
+        (permission) =>
+          (opts.email === ANYONE ? permission.type === ANYONE : permission.email === opts.email) &&
+          (!opts.role || permission.role === opts.role)
+      ) || false
+    );
+  };
+}
