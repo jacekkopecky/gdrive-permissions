@@ -17,6 +17,7 @@
     "strip-ansi": "^7.0.1"
   },
   "devDependencies": {
+    "@types/command-line-args": "^5.2.0",
     "eslint": "^8.35.0",
     "eslint-config-portsoc": "github:portsoc/eslint-config-portsoc#eslint_v8",
     "eslint-config-portsoc-ts": "github:portsoc/eslint-config-portsoc-ts#update-to-eslint-8",
