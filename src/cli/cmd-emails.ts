@@ -8,15 +8,17 @@ export default async function listEmails(): Promise<void> {
     return;
   }
 
-  const emails = new Set<string>();
-  let includesAnyone = false;
+  const emails = new Map<string, Set<string>>();
+  const anyoneRoles = new Set<string>();
   for (const file of files) {
     if (file.permissions) {
       for (const perm of file.permissions) {
         if (perm.email) {
-          emails.add(perm.email);
+          const roles = emails.get(perm.email) ?? new Set();
+          roles.add(perm.role);
+          emails.set(perm.email, roles);
         } else if (perm.type === 'anyone') {
-          includesAnyone = true;
+          anyoneRoles.add(perm.role);
         } else {
           console.error(`bad permission in file ${file.id}:`, perm);
         }
@@ -24,20 +26,25 @@ export default async function listEmails(): Promise<void> {
     }
   }
 
+  const numLength = String(emails.size).length + 1;
   if (emails.size > 0) {
     console.log('Emails with permissions to some files:');
 
-    const emailsArr = Array.from(emails).sort();
-    const numLength = String(emailsArr.length).length + 1;
+    const emailsArr = Array.from(emails.keys()).sort();
     for (let i = 0; i < emailsArr.length; i++) {
       const email = emailsArr[i];
-      console.log(`${String(i + 1).padStart(numLength)}. ${email}`);
+      const roles = Array.from(emails.get(email) ?? ['ERROR']).sort();
+      console.log(`${String(i + 1).padStart(numLength)}. ${email} - ${roles.join(', ')}`);
     }
   } else {
     console.log('No emails found (not even owners?)');
   }
 
-  if (includesAnyone) {
-    console.log('some files are accessible by anyone with the link');
+  if (anyoneRoles.size > 0) {
+    console.log(
+      ` ${''.padStart(numLength, '-')} "anyone with the link" - ${Array.from(anyoneRoles)
+        .sort()
+        .join(', ')}`
+    );
   }
 }
