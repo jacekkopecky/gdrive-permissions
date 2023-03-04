@@ -5,7 +5,8 @@
  */
 
 import { parseArgsAndRun } from './cli/cli.js';
-await parseArgsAndRun();
+const retval = await parseArgsAndRun();
+if (retval) process.exit(retval);
 
 // import archy from './lib/archy.js';
 // import { makeHierarchy, readInfoFiles } from './lib/gdrive-files.js';

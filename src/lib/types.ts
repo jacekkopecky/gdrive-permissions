@@ -51,7 +51,7 @@ export function isInfoFile(record: Partial<InfoFile>): record is InfoFile {
   );
 }
 
-export const PermissionRoles = ['writer', 'commenter', 'reader', 'owner'] as const;
+export const PermissionRoles = ['owner', 'writer', 'commenter', 'reader'] as const;
 export const PermissionRolesArray: readonly string[] = PermissionRoles;
 
 const PermissionTypes = ['user', 'anyone'] as const;

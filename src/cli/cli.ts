@@ -14,7 +14,7 @@ const commonOptions: commandLineArgs.OptionDefinition[] = [
 interface Command {
   command: string;
   arguments?: commandLineArgs.OptionDefinition[];
-  function?: (args: Record<string, unknown>) => void | Promise<void>;
+  function?: (args: Record<string, unknown>) => void | number | Promise<void | number>;
   description?: string | string[];
 }
 
@@ -42,7 +42,15 @@ const commands: Command[] = [
   {
     command: 'emails',
     function: emailsCommand,
-    description: 'List emails that have permissions, and the roles they have.',
+    arguments: [
+      { name: 'role', defaultOption: true },
+      { name: 'group-by-role', alias: 'g', type: Boolean },
+    ],
+    description: [
+      'List emails that have permissions, and the roles they have.',
+      'If --group-by-role (or -g) is specified, the output is shown per role.',
+      'If a role is specified, list only emails that have that role.',
+    ],
   },
   {
     command: 'find',
@@ -95,7 +103,7 @@ Commands:`);
   }
 }
 
-export async function parseArgsAndRun(): Promise<void> {
+export async function parseArgsAndRun(): Promise<void | number> {
   const mainArgs = commandLineArgs(topLevelOptions, { stopAtFirstUnknown: true });
   const commonArgs = commandLineArgs(commonOptions, {
     argv: mainArgs._unknown || [],

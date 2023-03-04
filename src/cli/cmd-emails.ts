@@ -1,6 +1,23 @@
 import { readInfoAndPermFiles } from '../lib/gdrive-files.js';
+import { PermissionRolesArray } from '../lib/types.js';
 
-export default async function listEmails(): Promise<void> {
+interface EmailsArgs {
+  role?: string;
+  'group-by-role'?: string;
+}
+
+export default async function listEmails(args: EmailsArgs): Promise<void | number> {
+  if (args.role && args['group-by-role']) {
+    console.error('Error: specify a role or -g, not both at the same time.');
+    return -1;
+  }
+
+  if (args.role && !PermissionRolesArray.includes(args.role)) {
+    const knownRoles = PermissionRolesArray.join(', ');
+    console.error(`Error: unknown role "${args.role}". Supported roles are ${knownRoles}.`);
+    return -1;
+  }
+
   const files = await readInfoAndPermFiles();
 
   if (files.length === 0) {
@@ -26,6 +43,42 @@ export default async function listEmails(): Promise<void> {
     }
   }
 
+  if (args.role) {
+    printForRole(emails, anyoneRoles, args.role);
+  } else if (args['group-by-role']) {
+    for (const role of PermissionRolesArray) {
+      printForRole(emails, anyoneRoles, role);
+      console.log();
+    }
+  } else {
+    printAllEmailsAndRoles(emails, anyoneRoles);
+  }
+}
+
+function printForRole(emails: Map<string, Set<string>>, anyoneRoles: Set<string>, role: string) {
+  const emailsArr = Array.from(emails.entries())
+    .filter(([, roles]) => roles.has(role))
+    .map(([email]) => email)
+    .sort();
+  const numLength = String(emailsArr.length).length + 1;
+
+  if (emailsArr.length > 0) {
+    console.log(`Emails who are "${role}" on some files:`);
+
+    for (let i = 0; i < emailsArr.length; i++) {
+      const email = emailsArr[i];
+      console.log(`${String(i + 1).padStart(numLength)}. ${email}`);
+    }
+  } else {
+    console.log(`No emails found with role ${role}`);
+  }
+
+  if (anyoneRoles.has(role)) {
+    console.log(` ${''.padStart(numLength, '-')} "anyone with the link" has role ${role}`);
+  }
+}
+
+function printAllEmailsAndRoles(emails: Map<string, Set<string>>, anyoneRoles: Set<string>) {
   const numLength = String(emails.size).length + 1;
   if (emails.size > 0) {
     console.log('Emails with permissions to some files:');
