@@ -34,7 +34,7 @@ export async function readLineFile(
     const match = line.match(LINE_RE);
     if (!match) {
       if (line.trim()) {
-        console.warn('skipping misformatted line:', line);
+        console.warn('Warning: skipping misformatted line:', line);
       }
     } else {
       const key = options.lowercasePropertyNames ? match[1].toLowerCase() : match[1];

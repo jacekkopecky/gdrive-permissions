@@ -4,7 +4,7 @@
  * Use `gdrivep --help` for usage instructions.
  */
 
-import { parseArgsAndRun } from './cli/arguments.js';
+import { parseArgsAndRun } from './cli/cli.js';
 await parseArgsAndRun();
 
 // import archy from './lib/archy.js';

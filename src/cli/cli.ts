@@ -1,9 +1,14 @@
 import commandLineArgs from 'command-line-args';
 import filesCommand from './cmd-files.js';
+import emailsCommand from './cmd-emails.js';
 
 const topLevelOptions: commandLineArgs.OptionDefinition[] = [
   { name: 'command', defaultOption: true },
+];
+
+const commonOptions: commandLineArgs.OptionDefinition[] = [
   { name: 'help', alias: 'h', type: Boolean },
+  { name: 'verbose', alias: 'v', type: Boolean },
 ];
 
 interface Command {
@@ -15,7 +20,7 @@ interface Command {
 
 /*
 
---list-emails (-e)
+todo notes
 --list-files-with-permission (-l) (email | "anyone") [role]
 
 - [ ] for a given [email] and [role], list files where that email has that role
@@ -30,13 +35,14 @@ interface Command {
 
 const commands: Command[] = [
   {
-    command: 'emails',
-    description: 'List emails that have permissions, and the roles they have.',
-  },
-  {
     command: 'files',
     function: filesCommand,
     description: 'List the files found in the drive.',
+  },
+  {
+    command: 'emails',
+    function: emailsCommand,
+    description: 'List emails that have permissions, and the roles they have.',
   },
   {
     command: 'find',
@@ -70,6 +76,7 @@ Usage: gdrivep <command> [options]
 
 Global options:
   --help, -h      Show this help message.
+  --verbose, -v   Show warnings about unexpected values and missing files.
 
 Commands:`);
 
@@ -89,30 +96,42 @@ Commands:`);
 }
 
 export async function parseArgsAndRun(): Promise<void> {
-  const mainOptions = commandLineArgs(topLevelOptions, { stopAtFirstUnknown: true });
-  const argv = mainOptions._unknown || [];
+  const mainArgs = commandLineArgs(topLevelOptions, { stopAtFirstUnknown: true });
+  const commonArgs = commandLineArgs(commonOptions, {
+    argv: mainArgs._unknown || [],
+    partial: true,
+  });
 
-  if (mainOptions.help) {
+  if (commonArgs.help) {
     help();
     return;
   }
-  if (!mainOptions.command) {
+  if (!mainArgs.command) {
     help(true);
     return;
   }
 
-  const command = findCommand(mainOptions.command);
+  const command = findCommand(mainArgs.command);
   if (!command) {
-    console.warn('Unknown command:', mainOptions.command);
+    console.warn('Unknown command:', mainArgs.command);
     help(true);
     return;
   }
 
-  const args = command.arguments ? commandLineArgs(command.arguments, { argv }) : {};
+  if (!commonArgs.verbose) {
+    console.warn = () => {
+      /* nothing */
+    };
+  }
+
+  const args = command.arguments
+    ? commandLineArgs(command.arguments, { argv: commonArgs._unknown || [] })
+    : {};
+
   if (command.function) {
     return command.function(args);
   } else {
-    console.warn('Command not implemented:', mainOptions.command);
+    console.warn('Command not implemented:', mainArgs.command);
   }
 }
 

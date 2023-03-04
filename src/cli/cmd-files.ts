@@ -1,9 +1,14 @@
 import archy from '../lib/archy.js';
-import { makeHierarchy, readInfoFiles } from '../lib/gdrive-files.js';
+import { makeHierarchy, readInfoAndPermFiles } from '../lib/gdrive-files.js';
 import { CoreFile, InfoFile } from '../lib/types.js';
 
 export default async function listFiles(): Promise<void> {
-  const files = await readInfoFiles();
+  const files = await readInfoAndPermFiles();
+  if (files.length === 0) {
+    console.log('no files found, you may need to run list-files.sh first');
+    return;
+  }
+
   console.warn(files.length, 'files');
 
   annotateNoPermissions(files);

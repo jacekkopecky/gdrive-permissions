@@ -66,6 +66,9 @@ export interface Permission {
 }
 
 export function isPermission(record: Partial<Permission>): record is Permission {
+  if (record.email === '' && record.type !== 'anyone') {
+    console.warn('Warning: empty email but not "anyone"', record);
+  }
   return (
     record.id != null &&
     record.type != null &&

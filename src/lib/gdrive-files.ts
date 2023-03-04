@@ -12,7 +12,6 @@ import {
   InfoFile,
   isFile,
   isInfoFile,
-  isPermission,
   isPermissions,
   Permission,
 } from './types.js';
@@ -39,7 +38,7 @@ export async function readLsFiles(): Promise<File[]> {
         retval.push(record);
         record.parent = id;
       } else {
-        console.warn('skipping file record due to bad structure', record);
+        console.warn('Warning: skipping file record due to bad structure', record);
       }
     }
   }
@@ -49,7 +48,7 @@ export async function readLsFiles(): Promise<File[]> {
 /**
  * Read all the info-*.txt files and return an array of the file/folder information contained there.
  */
-export async function readInfoFiles(): Promise<InfoFile[]> {
+export async function readInfoAndPermFiles(): Promise<InfoFile[]> {
   const retval: InfoFile[] = [];
   const fileNames = await listFiles(INFO_FILE_RE);
   for (const fileName of fileNames) {
@@ -59,11 +58,11 @@ export async function readInfoFiles(): Promise<InfoFile[]> {
       retval.push(record);
       record.parent = record.parents;
       if (id !== record.id) {
-        console.warn(`file ID inside doesn't match filename: ${fileName} `);
+        console.warn(`Warning: file ID inside doesn't match filename: ${fileName} `);
       }
       record.permissions = await readPermissions(record);
     } else {
-      console.warn('skipping file record due to bad structure', record);
+      console.warn('Warning: skipping file record due to bad structure', record);
     }
   }
   return retval;
@@ -73,14 +72,14 @@ async function readPermissions(file: InfoFile): Promise<Permission[] | undefined
   try {
     const records = await readColFile(PERM_FILE(file.id));
     if (records.length === 0) {
-      console.warn(`error: no permissions in file ${PERM_FILE(file.id)}`);
+      console.warn(`Warning: no permissions in file ${PERM_FILE(file.id)}`);
     } else if (isPermissions(records)) {
       return records;
     } else {
-      console.warn(`error in permissions file ${PERM_FILE(file.id)}`);
+      console.warn(`Warning: invalid permissions file ${PERM_FILE(file.id)}`);
     }
   } catch (e) {
-    console.warn(`error reading permissions file ${PERM_FILE(file.id)}`);
+    console.warn(`Warning: could not read permissions file ${PERM_FILE(file.id)}`);
   }
 }
 
@@ -98,7 +97,7 @@ export function makeHierarchy<T extends CoreFile<T>>(files: T[]): T[] {
         parent.children ??= [];
         parent.children.push(file);
       } else {
-        console.warn(`missing parent ${file.parent} of file ${file.id}`);
+        console.warn(`Warning: missing parent ${file.parent} of file ${file.id}`);
       }
     } else {
       roots.push(file);
@@ -115,8 +114,13 @@ export function makeHierarchy<T extends CoreFile<T>>(files: T[]): T[] {
 }
 
 async function listFiles(pattern: RegExp): Promise<string[]> {
-  const files = await fs.readdir(FILES_DIR);
-  return files.filter((name) => pattern.test(name)).map((name) => path.join(FILES_DIR, name));
+  try {
+    const files = await fs.readdir(FILES_DIR);
+    return files.filter((name) => pattern.test(name)).map((name) => path.join(FILES_DIR, name));
+  } catch (e) {
+    console.error(`error listing files in ${FILES_DIR}`);
+    return [];
+  }
 }
 
 function compareFiles<T extends CoreFile<T>>(a: T, b: T): number {
