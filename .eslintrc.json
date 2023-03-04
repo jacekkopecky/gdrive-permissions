@@ -1,0 +1,12 @@
+{
+  "extends": "portsoc-ts",
+  "root": true,
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/indent": "off",
+    "comma-dangle": "off"
+  }
+}
