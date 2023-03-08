@@ -1,6 +1,7 @@
 import commandLineArgs from 'command-line-args';
-import filesCommand from './cmd-files.js';
-import emailsCommand from './cmd-emails.js';
+import filesImplementation from './cmd-files.js';
+import emailsImplementation from './cmd-emails.js';
+import findImplementation from './cmd-find.js';
 
 const topLevelOptions: commandLineArgs.OptionDefinition[] = [
   { name: 'command', defaultOption: true },
@@ -36,12 +37,12 @@ todo notes
 const commands: Command[] = [
   {
     command: 'files',
-    function: filesCommand,
+    function: filesImplementation,
     description: 'List the files found in the drive.',
   },
   {
     command: 'emails',
-    function: emailsCommand,
+    function: emailsImplementation,
     arguments: [
       { name: 'role', defaultOption: true },
       { name: 'group-by-role', alias: 'g', type: Boolean },
@@ -55,6 +56,7 @@ const commands: Command[] = [
   {
     command: 'find',
     arguments: [{ name: 'params', defaultOption: true, multiple: true }],
+    function: findImplementation,
     description: [
       'Find files where the given email (or "anyone") has a permission.',
       'If a role is also specified ("writer", "commenter", "reader", "owner"),',
@@ -64,9 +66,10 @@ const commands: Command[] = [
     ],
   },
   {
-    command: 'remove-from-file',
+    command: 'remove',
+    arguments: [{ name: 'file', defaultOption: false, multiple: false }],
     description: [
-      'Given as input the output of the "find" command,',
+      'Given as input (or as -f <file>) the output of the "find" command,',
       'remove all the listed permissions.',
     ],
   },

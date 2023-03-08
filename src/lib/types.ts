@@ -8,6 +8,7 @@ export interface CoreFile<T extends CoreFile<T>> {
   created: string;
   parent?: string;
   children?: T[];
+  matching?: boolean;
 }
 
 function isCoreFile<T extends CoreFile<T>>(record: Partial<CoreFile<T>>): record is CoreFile<T> {
@@ -53,13 +54,26 @@ export function isInfoFile(record: Partial<InfoFile>): record is InfoFile {
 
 export const PermissionRoles = ['owner', 'writer', 'commenter', 'reader'] as const;
 export const PermissionRolesArray: readonly string[] = PermissionRoles;
+export type PermissionRole = (typeof PermissionRoles)[number];
+
+export function isPermissionRole(val: unknown): val is PermissionRole {
+  if (typeof val !== 'string') return false;
+  return PermissionRolesArray.includes(val);
+}
 
 const PermissionTypes = ['user', 'anyone'] as const;
+export const PermissionTypesArray: readonly string[] = PermissionTypes;
+export type PermissionType = (typeof PermissionTypes)[number];
+
+export function isPermissionType(val: unknown): val is PermissionType {
+  if (typeof val !== 'string') return false;
+  return PermissionTypesArray.includes(val);
+}
 
 export interface Permission {
   id: string;
-  type: (typeof PermissionTypes)[number];
-  role: (typeof PermissionRoles)[number];
+  type: PermissionType;
+  role: PermissionRole;
   email: string;
   domain: string;
   discoverable: string;
@@ -71,10 +85,8 @@ export function isPermission(record: Partial<Permission>): record is Permission 
   }
   return (
     record.id != null &&
-    record.type != null &&
-    PermissionTypes.includes(record.type) &&
-    record.role != null &&
-    PermissionRoles.includes(record.role) &&
+    isPermissionType(record.type) &&
+    isPermissionRole(record.role) &&
     record.email != null &&
     record.domain != null &&
     record.discoverable != null

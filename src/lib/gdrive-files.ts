@@ -83,7 +83,14 @@ async function readPermissions(file: InfoFile): Promise<Permission[] | undefined
   }
 }
 
-export function makeHierarchy<T extends CoreFile<T>>(files: T[]): T[] {
+interface MakeHierarchyOptions {
+  onlyMatching?: boolean;
+}
+
+export function makeHierarchy<T extends CoreFile<T>>(
+  files: T[],
+  opts: MakeHierarchyOptions = {}
+): T[] {
   const idToFile = new Map<string, T>();
   for (const file of files) {
     idToFile.set(file.id, file);
@@ -104,13 +111,34 @@ export function makeHierarchy<T extends CoreFile<T>>(files: T[]): T[] {
     }
   }
 
-  // sort all alphabetically
-  roots.sort(compareFiles);
-  for (const file of files) {
-    file.children?.sort(compareFiles);
+  if (opts.onlyMatching) {
+    removeNonMatchingNodes(roots);
   }
 
+  sortHierarchy(roots);
+
   return roots;
+
+  function removeNonMatchingNodes(items: T[] | undefined): void {
+    if (!items) return;
+
+    for (let i = items.length - 1; i >= 0; i -= 1) {
+      const item = items[i];
+      removeNonMatchingNodes(item.children);
+      const hasChildrenLeft = item.children && item.children.length > 0;
+      if (!item.matching && !hasChildrenLeft) {
+        items.splice(i, 1); // remove the item
+      }
+    }
+  }
+
+  function sortHierarchy(items: T[] | undefined) {
+    if (!items) return;
+    items.sort(compareFiles);
+    for (const item of items) {
+      sortHierarchy(item.children);
+    }
+  }
 }
 
 async function listFiles(pattern: RegExp): Promise<string[]> {
