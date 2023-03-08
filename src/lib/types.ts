@@ -9,6 +9,7 @@ export interface CoreFile<T extends CoreFile<T>> {
   parent?: string;
   children?: T[];
   matching?: boolean;
+  nameAnnotation?: string;
 }
 
 function isCoreFile<T extends CoreFile<T>>(record: Partial<CoreFile<T>>): record is CoreFile<T> {

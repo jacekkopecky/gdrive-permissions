@@ -23,7 +23,7 @@ export default async function findFilesWithPermissions({
   annotateMatches(files, emailOrAnyone, role);
 
   const hierarchy = makeHierarchy(files, { onlyMatching: true });
-  printHierarchy(hierarchy);
+  printHierarchy(hierarchy, { printNameAnnotations: true });
 }
 
 function parseParams(params: string[] = []) {
@@ -71,7 +71,7 @@ function annotateMatches(files: InfoFile[], emailOrAnyone: string, role?: Permis
         ? file.permissions?.find((p) => p.type === 'anyone')
         : file.permissions?.find((p) => p.email === emailOrAnyone);
     if (permission && (!role || permission.role === role)) {
-      file.name = `(${permission.role}) ${file.name}                         ID:${file.id}`;
+      file.nameAnnotation = `${permission.role.padEnd(9)} ID:${file.id}`;
       file.matching = true;
     }
   }

@@ -57,3 +57,11 @@ export default function archy(obj: Data | string, prefix = '', opts: Options = {
       .join('')
   );
 }
+
+/**
+ * Return how many characters are before the item name if the item is at `depth` in the hierarchy.
+ * Depth 0 is a top-level item, its children are at depth 1 and so on.
+ */
+export function getDepthIndent(depth: number): number {
+  return depth <= 0 ? 0 : depth * 2 + 2;
+}
