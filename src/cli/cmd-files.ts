@@ -1,6 +1,6 @@
-import archy from '../lib/archy.js';
 import { makeHierarchy, readInfoAndPermFiles } from '../lib/gdrive-files.js';
-import { CoreFile, InfoFile } from '../lib/types.js';
+import { printHierarchy } from '../lib/print-hierarchy.js';
+import { InfoFile } from '../lib/types.js';
 
 export default async function listFiles(): Promise<void> {
   const files = await readInfoAndPermFiles();
@@ -15,12 +15,6 @@ export default async function listFiles(): Promise<void> {
 
   const hierarchy = makeHierarchy(files);
   printHierarchy(hierarchy);
-}
-
-function printHierarchy<T extends CoreFile<T>>(roots: T[]): void {
-  for (const root of roots) {
-    console.log(archy(root));
-  }
 }
 
 function annotateNoPermissions(files: InfoFile[]): void {
