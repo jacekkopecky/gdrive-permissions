@@ -36,7 +36,10 @@ export function printHierarchy<T extends CoreFile<T>>(
 
     return items.map((item) => {
       const name = item.nameAnnotation
-        ? item.name.padEnd(len - getDepthIndent(currentDepth)) + ' ' + item.nameAnnotation
+        ? item.name +
+          ' '.repeat(len - getDepthIndent(currentDepth) - stringWidth(item.name)) +
+          ' ' +
+          item.nameAnnotation
         : item.name;
 
       const children = annotateNames(item.children, len, currentDepth + 1);

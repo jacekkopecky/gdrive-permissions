@@ -130,3 +130,5 @@ export function stringWidth(string: string, options: ColrmWidthOptions = {}): nu
 
   return width;
 }
+
+// todo add tests from colrm.ts and some Polish characters with combining characters

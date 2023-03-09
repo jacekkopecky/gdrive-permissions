@@ -74,7 +74,7 @@ function printForRole(emails: Map<string, Set<string>>, anyoneRoles: Set<string>
   }
 
   if (anyoneRoles.has(role)) {
-    console.log(` ${''.padStart(numLength, '-')} "anyone with the link" has role ${role}`);
+    console.log(` ${'-'.repeat(numLength)} "anyone with the link" has role ${role}`);
   }
 }
 
@@ -95,7 +95,7 @@ function printAllEmailsAndRoles(emails: Map<string, Set<string>>, anyoneRoles: S
 
   if (anyoneRoles.size > 0) {
     console.log(
-      ` ${''.padStart(numLength, '-')} "anyone with the link" - ${Array.from(anyoneRoles)
+      ` ${'-'.repeat(numLength)} "anyone with the link" - ${Array.from(anyoneRoles)
         .sort()
         .join(', ')}`
     );
