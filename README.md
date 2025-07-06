@@ -63,6 +63,7 @@ for every \*.dir:
 
 Functionalities:
 
+- [ ] download ls-_, info-_ and perm-\* files from gdrive from the node app
 - [x] list all known files
 - [ ] for a given [email] and [role], list files where that email has that role
   - folders may or may not have the role, how do we show that?

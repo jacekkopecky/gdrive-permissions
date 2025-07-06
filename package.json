@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "prettier -c src && eslint src"
+    "lint": "prettier -c src && eslint src",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

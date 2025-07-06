@@ -1,4 +1,4 @@
-.gdrive-permissions
+.gdrive-permissions*
 node_modules
 dist
 tmp

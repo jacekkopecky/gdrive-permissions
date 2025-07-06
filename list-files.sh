@@ -43,7 +43,7 @@ function read_and_recurse() {
   NAMECOL=`head -1 "$FILE"  | sed -e 's/Name.*//' | wc -c`
   TYPECOL=`head -1 "$FILE"  | sed -e 's/Type.*//' | wc -c`
 
-  tail +2 "$FILE" | node colrm.js $NAMECOL $((TYPECOL-1)) |
+  tail +2 "$FILE" | node dist/colrm.js $NAMECOL $((TYPECOL-1)) |
   while read ID TYPE REST
   do
     if [ "$TYPE" = "folder" ]
