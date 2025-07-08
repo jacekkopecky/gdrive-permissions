@@ -1,23 +1,21 @@
 import { maybeEnableButtons } from './buttons.js';
 
+/**
+ * @import {LoadedFile, FileInTree} from "./types"
+ */
+
 export async function importLoadedFiles() {
-  /** @type {{
-   *    isLoaded: boolean,
-   *    id: string,
-   *    name: string,
-   *    permissions: unknown[],
-   *    isFolder: boolean,
-   *    parent?: string
-   * }[]} */
+  /** @type {LoadedFile[]} */
   let files;
 
   try {
-    files = (await import('../loaded-files.json', { with: { type: 'json' } })).default;
+    const imported = await import('../loaded-files.json', { with: { type: 'json' } });
+    files = /** @type {LoadedFile[]} */ (imported.default);
   } catch {
     files = [];
   }
 
-  window.loadedFiles = files;
+  /** @type {any} */ (window).loadedFiles = files;
   maybeEnableButtons({ loadedFiles: true });
 
   return files;

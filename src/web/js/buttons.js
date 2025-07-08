@@ -6,8 +6,8 @@ export function maybeEnableButtons(state) {
   loadedFiles ||= state?.loadedFiles;
 
   if (gapiInited && loadedFiles) {
-    document.querySelector('#btn_authorize').disabled = false;
-    document.querySelector('#btn_load').disabled = false;
-    document.querySelector('#btn_stop').disabled = false;
+    /** @type {HTMLButtonElement} */ (document.querySelector('#btn_authorize')).disabled = false;
+    /** @type {HTMLButtonElement} */ (document.querySelector('#btn_load')).disabled = false;
+    /** @type {HTMLButtonElement} */ (document.querySelector('#btn_stop')).disabled = false;
   }
 }

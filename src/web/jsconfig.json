@@ -1,4 +1,9 @@
 {
+  "compilerOptions": {
+    "checkJs": true,
+    "module": "preserve",
+    "target": "esnext"
+  },
   "typeAcquisition": {
     "include": [
       "googleapis"

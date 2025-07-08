@@ -7,6 +7,7 @@ const tokenClient = google.accounts.oauth2.initTokenClient({
   client_id: CLIENT_ID,
   scope: SCOPES,
   prompt: '',
+  callback: null, // assigned later
 });
 
 gapi.load('client', initializeGapiClient);
@@ -21,7 +22,7 @@ async function initializeGapiClient() {
 
 document.querySelector('#btn_authorize').addEventListener('click', handleAuthClick);
 function handleAuthClick() {
-  tokenClient.callback = (resp) => {
+  /** @type {any} */ (tokenClient).callback = (resp) => {
     if (resp.error !== undefined) {
       throw resp;
     }

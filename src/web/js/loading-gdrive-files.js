@@ -52,12 +52,14 @@ async function loadFilesIn(dir) {
       console.log(`loading files in ${dir}`, pageToken ? '(continued)' : '');
 
       const response = await gapi.client.drive.files.list({
+        // @ts-ignore
         pageSize: 1000,
         pageToken,
         fields: 'nextPageToken, files(id, name, permissions, mimeType, parents)',
         q: `'${dir}' in parents`,
       });
 
+      // @ts-ignore
       files.push(...response.result.files);
 
       pageToken = response.result.nextPageToken;
