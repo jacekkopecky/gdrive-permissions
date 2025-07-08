@@ -1,9 +1,9 @@
 /* global gapi */
 
 import './js/gapi.js';
-import { importLoadedFiles, addRoot, makeTree } from './js/loaded-files.js';
+import { importLoadedFiles, addRoot } from './js/loaded-files.js';
 import { printStats, loadFiles, stop } from './js/loading-gdrive-files.js';
-import { showTree } from './js/tree-view.js';
+import { makeTree, showTree } from './js/tree-view.js';
 
 const ROOT = 'root-folder-gdrive-id';
 
