@@ -98,3 +98,15 @@ function sortFiles(files) {
     if (file.children) sortFiles(file.children);
   }
 }
+
+/**
+ * @param {FileInTree[]} files
+ * @return {Generator<FileInTree>}
+ */
+export function* treeIterator(files) {
+  if (!files) return;
+  for (const file of files) {
+    yield file;
+    yield* treeIterator(file.children);
+  }
+}

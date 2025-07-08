@@ -3,6 +3,7 @@
 import './js/gapi.js';
 import { importLoadedFiles, addRoot } from './js/loaded-files.js';
 import { printStats, loadFiles, stop } from './js/loading-gdrive-files.js';
+import { getPeopleWithPermissions, showPeople } from './js/permissions.js';
 import { makeTree, showTree } from './js/tree-view.js';
 
 const ROOT = 'root-folder-gdrive-id';
@@ -20,4 +21,8 @@ document.querySelector('#btn_stop').addEventListener('click', stop);
 
 const tree = makeTree(loadedFiles);
 
-const treeEl = showTree(tree, document.body, true);
+showTree(tree, document.querySelector('#files'));
+
+const people = getPeopleWithPermissions(loadedFiles);
+
+showPeople(people, document.querySelector('#permissions'));
