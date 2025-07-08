@@ -1,5 +1,19 @@
 /* global gapi,google */
 
+import loadedFilesImport from './loaded-files.json' with { type: 'json' };
+
+/** @type {{
+ isLoaded: boolean,
+ id: string,
+ name: string,
+ permissions: unknown[],
+ isFolder: boolean,
+ parent?: string
+}[]} */
+const loadedFiles = loadedFilesImport;
+
+window.loadedFiles = loadedFiles;
+
 const CLIENT_ID = '464788617740-vids6f3rf9vubg41bft9kj39s1q744hd.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyACPcvEvNIvclG8fy8cXfHzVq6byEIN3nA';
 
@@ -10,12 +24,16 @@ const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/res
 // included, separated by spaces.
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 
+/** @type {google.accounts.oauth2.TokenClient} */
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
 
-document.getElementById('authorize_button').style.visibility = 'hidden';
-document.getElementById('signout_button').style.visibility = 'hidden';
+document.querySelector('#btn_authorize').addEventListener('click', handleAuthClick);
+document.querySelector('#btn_load').addEventListener('click', loadFiles);
+document.querySelector('#btn_stop').addEventListener('click', stop);
+const statsEl = document.getElementById('stats');
+const errorsEl = document.getElementById('errors');
 
 /**
  * Callback after api.js is loaded.
@@ -23,6 +41,11 @@ document.getElementById('signout_button').style.visibility = 'hidden';
 window.gapiLoaded = function gapiLoaded() {
   gapi.load('client', initializeGapiClient);
 };
+
+let stopping = false;
+function stop() {
+  stopping = true;
+}
 
 /**
  * Callback after the API client is loaded. Loads the
@@ -44,7 +67,7 @@ window.gisLoaded = function gisLoaded() {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: '', // defined later
+    prompt: '',
   });
   gisInited = true;
   maybeEnableButtons();
@@ -55,67 +78,111 @@ window.gisLoaded = function gisLoaded() {
  */
 function maybeEnableButtons() {
   if (gapiInited && gisInited) {
-    document.getElementById('authorize_button').style.visibility = 'visible';
+    document.querySelector('#btn_authorize').disabled = false;
+    printStats();
   }
 }
 
 /**
  *  Sign in the user upon button click.
  */
-window.handleAuthClick = function handleAuthClick() {
-  tokenClient.callback = async (resp) => {
+function handleAuthClick() {
+  tokenClient.callback = (resp) => {
     if (resp.error !== undefined) {
       throw resp;
     }
-    document.getElementById('signout_button').style.visibility = 'visible';
-    document.getElementById('authorize_button').innerText = 'Refresh';
-    await listFiles();
   };
 
-  if (gapi.client.getToken() === null) {
-    // Prompt the user to select a Google Account and ask for consent to share their data
-    // when establishing a new session.
-    tokenClient.requestAccessToken({ prompt: 'consent' });
+  const token = gapi.client.getToken();
+  if (token == null) {
+    tokenClient.requestAccessToken({ prompt: '' });
+    // tokenClient.requestAccessToken({ prompt: 'consent' });
   } else {
-    // Skip display of account chooser and consent dialog for an existing session.
     tokenClient.requestAccessToken({ prompt: '' });
   }
-};
+}
 
-/**
- *  Sign out the user upon button click.
- */
-window.handleSignoutClick = function handleSignoutClick() {
-  const token = gapi.client.getToken();
-  if (token !== null) {
-    google.accounts.oauth2.revoke(token.access_token);
-    gapi.client.setToken('');
-    document.getElementById('content').innerText = '';
-    document.getElementById('authorize_button').innerText = 'Authorize';
-    document.getElementById('signout_button').style.visibility = 'hidden';
-  }
-};
+const ROOT = 'root-folder-gdrive-id';
+if (loadedFiles.length === 0) {
+  loadedFiles.push({
+    isLoaded: false,
+    id: ROOT,
+    name: 'ROOT',
+    permissions: [],
+    isFolder: true,
+  });
+}
 
-/**
- * Print metadata for first 10 files.
- */
-async function listFiles() {
-  let response;
+async function loadFiles() {
+  console.time('loadFiles');
   try {
-    response = await gapi.client.drive.files.list({
-      pageSize: 10,
-      fields: 'files(id, name)',
-    });
+    stopping = false;
+
+    do {
+      printStats();
+      const nextFolder = loadedFiles.find((f) => f.isFolder && !f.isLoaded);
+      if (!nextFolder) {
+        break;
+      }
+
+      const files = await loadFilesIn(nextFolder.id);
+      if (files) {
+        nextFolder.isLoaded = true;
+        loadedFiles.push(
+          ...files.map((f) => {
+            const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+            return {
+              isLoaded: !isFolder,
+              id: f.id,
+              name: f.name,
+              permissions: f.permissions,
+              isFolder,
+              parent: nextFolder.id,
+            };
+          }),
+        );
+      }
+    } while (!stopping);
   } catch (err) {
-    document.getElementById('content').innerText = err.message;
+    errorsEl.textContent = err.message;
+  }
+  console.timeEnd('loadFiles');
+}
+
+function printStats() {
+  const knownFilesCount = loadedFiles.length;
+  const allFolders = loadedFiles.filter((f) => f.isFolder);
+  const pendingFoldersCount = allFolders.filter((f) => !f.isLoaded).length;
+
+  const remaining = `${pendingFoldersCount} of ${allFolders.length}`;
+  statsEl.textContent += `loaded ${String(knownFilesCount - allFolders.length).padStart(4)} files, remaining ${remaining.padStart(10)} folders\n`;
+
+  errorsEl.scrollIntoView({ behavior: 'instant' });
+}
+
+async function loadFilesIn(dir) {
+  try {
+    let pageToken = undefined;
+    let files = [];
+
+    do {
+      console.log(`loading files in ${dir}`, pageToken ? '(continued)' : '');
+
+      const response = await gapi.client.drive.files.list({
+        pageSize: 1000,
+        pageToken,
+        fields: 'nextPageToken, files(id, name, permissions, mimeType, parents)',
+        q: `'${dir}' in parents`,
+      });
+
+      files.push(...response.result.files);
+
+      pageToken = response.result.nextPageToken;
+    } while (pageToken);
+
+    return files;
+  } catch (err) {
+    errorsEl.textContent = err.message;
     return;
   }
-  const files = response.result.files;
-  if (!files || files.length == 0) {
-    document.getElementById('content').innerText = 'No files found.';
-    return;
-  }
-  // Flatten to string to display
-  const output = files.reduce((str, file) => `${str}${file.name} (${file.id})\n`, 'Files:\n');
-  document.getElementById('content').innerText = output;
 }

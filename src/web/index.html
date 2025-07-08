@@ -1,17 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Drive API Quickstart</title>
     <meta charset="utf-8" />
   </head>
   <body>
-    <p>Drive API Quickstart</p>
+    <header>
+      <p>Drive API Quickstart</p>
+      <div style="display: flex; gap: 1em">
+        <button id="btn_authorize" disabled>Authorize</button>
+        <button id="btn_load">Load Files</button>
+        <button id="btn_stop">Stop</button>
+      </div>
+    </header>
 
-    <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
-    <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
-
-    <pre id="content" style="white-space: pre-wrap"></pre>
+    <pre id="stats" style="white-space: pre-wrap"></pre>
+    <pre id="errors" style="white-space: pre-wrap; color: #a00"></pre>
 
     <script src="./index.js" type="module"></script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
