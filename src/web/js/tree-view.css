@@ -1,0 +1,24 @@
+ul.tree-view {
+  line-height: 2em;
+
+  li {
+    cursor: pointer;
+    list-style-type: ' • ';
+
+    &.folder {
+      list-style-type: ' – ';
+
+      &:hover > span {
+        text-decoration: underline;
+      }
+
+      &.collapsed {
+        list-style-type: ' + ';
+
+        & > ul {
+          display: none;
+        }
+      }
+    }
+  }
+}

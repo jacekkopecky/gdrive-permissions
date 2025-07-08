@@ -7,10 +7,6 @@ export type LoadedFile = {
   parent?: string;
 };
 
-export type FileInTree = {
-  id: string;
-  name: string;
-  permissions: unknown[];
-  isFolder: boolean;
+export type FileInTree = LoadedFile & {
   children?: FileInTree[];
 };
