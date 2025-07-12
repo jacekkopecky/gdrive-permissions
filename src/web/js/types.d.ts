@@ -9,6 +9,10 @@ export type LoadedFile = {
 
 export type FileInTree = LoadedFile & {
   children?: FileInTree[];
+  parentFile?: FileInTree;
+  element?: HTMLElement;
+  resetTreeVisibility(hide = false): void;
+  showFile(): void;
 };
 
 export type Permission = {

@@ -8,6 +8,8 @@ document.adoptedStyleSheets.push(styles);
 
 import { treeIterator } from './tree-view.js';
 
+const ROLES = /** @type {const} */ (['reader', 'commenter', 'writer', 'owner']);
+
 /**
  * @param {FileInTree[]} files
  * @return {PersonWithPermissions[]}
@@ -64,11 +66,16 @@ export function showPeople(people, el) {
     const emailEl = document.createElement('span');
     emailEl.textContent = person.isAnyoneWithLink ? 'Anyone with link' : person.emailAddress;
     if (person.isAnyoneWithLink) emailEl.classList.add('anyone');
-    // todo add click listener to span
+
+    personEl.addEventListener('click', () => {
+      const wasAlreadySelected = personEl.classList.contains('selected');
+      resetSelectedPerson();
+      if (!wasAlreadySelected) showFilesByPerson(personEl, person);
+    });
 
     personEl.append(emailEl);
 
-    for (const role of ['reader', 'commenter', 'writer', 'owner']) {
+    for (const role of ROLES) {
       const roleEl = document.createElement('span');
       roleEl.classList.add('role');
       personEl.append(roleEl);
@@ -76,7 +83,7 @@ export function showPeople(people, el) {
       if (person.permissions[role]) {
         roleEl.textContent = role;
         const countEl = document.createElement('span');
-        countEl.textContent = person.permissions[role].size;
+        countEl.textContent = String(person.permissions[role].size);
         roleEl.append(countEl);
         // todo add click listener to roleEl
       } else {
@@ -88,4 +95,48 @@ export function showPeople(people, el) {
   }
 
   return block;
+
+  function resetSelectedPerson() {
+    for (const el of block.children) {
+      el.classList.remove('selected');
+    }
+
+    (
+      people[0].permissions.commenter ||
+      people[0].permissions.owner ||
+      people[0].permissions.reader ||
+      people[0].permissions.writer
+    )
+      ?.values()
+      .next()
+      .value?.resetTreeVisibility();
+  }
+}
+
+/**
+ * @param {HTMLElement} personEl
+ * @param {PersonWithPermissions} person
+ */
+function showFilesByPerson(personEl, person) {
+  /** @type {Set<FileInTree>} */
+  const allFiles = new Set();
+
+  for (const role of ROLES) {
+    if (person.permissions[role]) {
+      person.permissions[role].forEach((f) => allFiles.add(f));
+    }
+  }
+
+  let resetDone = false;
+
+  for (const file of allFiles) {
+    if (!resetDone) {
+      file.resetTreeVisibility(true);
+      resetDone = true;
+    }
+
+    file.showFile();
+  }
+
+  personEl.classList.add('selected');
 }

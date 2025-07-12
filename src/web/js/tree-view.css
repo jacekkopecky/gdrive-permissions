@@ -2,11 +2,22 @@ ul.tree-view {
   line-height: 2em;
 
   li {
-    cursor: pointer;
     list-style-type: ' • ';
+
+    &.hidden {
+      display: none;
+    }
+
+    &.visible-for-children > .name {
+      opacity: 0.5;
+    }
 
     &.folder {
       list-style-type: ' – ';
+
+      & > .name {
+        cursor: pointer;
+      }
 
       &:hover > span {
         text-decoration: underline;

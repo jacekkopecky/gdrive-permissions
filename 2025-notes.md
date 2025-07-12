@@ -11,7 +11,8 @@
 - [x] show all people who have any permissions
 - [x] for a person, show all their permissions
 - [x] highlight the People… and Files… headings in the page
-- [ ] for a person (and maybe selected permission), show all their files
+- [x] for a person (and maybe selected permission), show all their files
+  - [ ] for a person and selected permission, show only all those files
 - [ ] link to files so we can see them in the folder, or the file itself?
   - https://drive.google.com/file/d/FILE_ID/view ?
   - https://drive.google.com/drive/folders/FOLDER_ID

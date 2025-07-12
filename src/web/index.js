@@ -23,6 +23,6 @@ const tree = makeTree(loadedFiles);
 
 showTree(tree, document.querySelector('#files'));
 
-const people = getPeopleWithPermissions(loadedFiles);
+const people = getPeopleWithPermissions(tree);
 
 showPeople(people, document.querySelector('#permissions'));

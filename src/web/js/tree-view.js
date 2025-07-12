@@ -1,5 +1,5 @@
 /**
- * @import {FileInTree} from "./types"
+ * @import {FileInTree, LoadedFile} from "./types"
  */
 
 // @ts-ignore
@@ -10,7 +10,7 @@ document.adoptedStyleSheets.push(styles);
  * @param {FileInTree[]} tree
  * @param {HTMLElement} el
  */
-export function showTree(tree, el, expand = false) {
+export function showTree(tree, el, expand = true) {
   const ul = document.createElement('ul');
   ul.classList.add('tree-view');
   el.append(ul);
@@ -18,13 +18,15 @@ export function showTree(tree, el, expand = false) {
   for (const file of tree) {
     const li = document.createElement('li');
     const span = document.createElement('span');
+    span.classList.add('name');
     span.textContent = file.name;
     li.append(span);
     li.classList.toggle('collapsed', !expand);
     li.classList.toggle('folder', file.isFolder);
-    li.addEventListener('click', toggleCollapse);
+    span.addEventListener('click', toggleCollapse);
 
     ul.append(li);
+    file.element = li;
 
     if (file.children?.length) {
       showTree(file.children, li);
@@ -38,19 +40,20 @@ export function showTree(tree, el, expand = false) {
  * @param {MouseEvent} e
  */
 function toggleCollapse(e) {
-  /** @type {HTMLElement} */ (e.currentTarget).classList.toggle('collapsed');
+  /** @type {HTMLElement} */ (e.currentTarget).parentElement.classList.toggle('collapsed');
   e.preventDefault();
   e.stopPropagation();
   e.stopImmediatePropagation();
 }
 
 /**
- * @param {FileInTree[]} loadedFiles
+ * @param {LoadedFile[]} loadedFiles
  * @returns {FileInTree[]}
  */
 export function makeTree(loadedFiles) {
   /** @type {FileInTree[]} */
   const tree = [];
+  /** @type {Map<string, FileInTree>} */
   const idToFileMap = new Map();
 
   for (const file of loadedFiles) {
@@ -59,25 +62,66 @@ export function makeTree(loadedFiles) {
       continue;
     }
 
-    idToFileMap.set(file.id, file);
-    if (file.isFolder) file.children = [];
+    /** @type {FileInTree} */
+    const treeItem = { ...file, resetTreeVisibility, showFile };
+
+    idToFileMap.set(file.id, treeItem);
+    if (file.isFolder) treeItem.children = [];
 
     if (file.parent) {
-      const parent = idToFileMap.get(file.parent);
-      if (!parent) {
+      const parentFile = idToFileMap.get(file.parent);
+      if (!parentFile) {
         console.warn('ignoring file with unknown parent', file);
         continue;
       }
 
-      parent.children.push(file);
+      parentFile.children.push(treeItem);
+      treeItem.parentFile = parentFile;
     } else {
-      tree.push(file);
+      tree.push(treeItem);
     }
   }
 
   sortFiles(tree);
 
   return tree;
+
+  function resetTreeVisibility(hide = false) {
+    for (const file of treeIterator(tree)) {
+      doShowFile(file, hide);
+    }
+  }
+
+  /**
+   * @this {FileInTree}
+   */
+  function showFile() {
+    doShowFile(this);
+    doShowParent(this.parentFile);
+  }
+}
+
+/**
+ * @param {FileInTree} file
+ */
+function doShowFile(file, hide = false) {
+  file.element?.classList.toggle('hidden', hide);
+  file.element?.classList.toggle('visible-for-children', false);
+}
+
+/**
+ * @param {FileInTree | undefined} file
+ */
+function doShowParent(file) {
+  // if the parent is hidden, change it to visible-for-children
+  if (!file) return;
+
+  if (file.element?.classList.contains('hidden')) {
+    file.element?.classList.toggle('hidden', false);
+    file.element?.classList.toggle('visible-for-children', true);
+  }
+
+  doShowParent(file.parentFile);
 }
 
 /**

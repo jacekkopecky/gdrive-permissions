@@ -13,6 +13,7 @@
     grid-template-columns: subgrid;
     align-items: center;
     border-radius: 0.3em;
+    border: solid thin transparent;
 
     .anyone {
       font-style: italic;
@@ -20,6 +21,11 @@
 
     &:hover {
       background-color: #0af3;
+    }
+
+    &.selected {
+      background-color: #fa03;
+      border-color: #8888;
     }
 
     .role {
