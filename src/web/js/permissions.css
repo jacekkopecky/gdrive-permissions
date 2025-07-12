@@ -34,9 +34,15 @@
       justify-content: space-between;
       gap: 0.5em;
       border-radius: 0.3em;
+      border: solid thin transparent;
 
       &:hover {
         background-color: #0af3;
+      }
+
+      &.selected {
+        background-color: #fa03;
+        border-color: #8888;
       }
 
       &.disabled {

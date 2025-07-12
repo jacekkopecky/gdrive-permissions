@@ -15,9 +15,11 @@ export type FileInTree = LoadedFile & {
   showFile(): void;
 };
 
+export type Role = 'reader' | 'writer' | 'owner' | 'commenter';
+
 export type Permission = {
   id: string;
-  role: 'reader' | 'writer' | 'owner' | 'commenter';
+  role: Role;
   allowFileDiscovery?: boolean;
   emailAddress?: string;
   displayName?: string;

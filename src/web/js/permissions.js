@@ -1,5 +1,5 @@
 /**
- * @import {FileInTree, PersonWithPermissions} from "./types"
+ * @import {FileInTree, PersonWithPermissions, Role} from "./types"
  */
 
 // @ts-ignore
@@ -68,7 +68,8 @@ export function showPeople(people, el) {
     if (person.isAnyoneWithLink) emailEl.classList.add('anyone');
 
     personEl.addEventListener('click', () => {
-      const wasAlreadySelected = personEl.classList.contains('selected');
+      const wasAlreadySelected =
+        personEl.classList.contains('selected') && personEl.querySelector('.selected') == null;
       resetSelectedPerson();
       if (!wasAlreadySelected) showFilesByPerson(personEl, person);
     });
@@ -85,7 +86,13 @@ export function showPeople(people, el) {
         const countEl = document.createElement('span');
         countEl.textContent = String(person.permissions[role].size);
         roleEl.append(countEl);
-        // todo add click listener to roleEl
+
+        roleEl.addEventListener('click', (e) => {
+          const wasAlreadySelected = roleEl.classList.contains('selected');
+          resetSelectedPerson();
+          showFilesByPerson(personEl, person, wasAlreadySelected ? undefined : role, roleEl);
+          e.stopPropagation();
+        });
       } else {
         roleEl.classList.add('disabled');
       }
@@ -97,10 +104,11 @@ export function showPeople(people, el) {
   return block;
 
   function resetSelectedPerson() {
-    for (const el of block.children) {
+    for (const el of block.querySelectorAll('.selected')) {
       el.classList.remove('selected');
     }
 
+    // call resetTreeVisibility() on the any file (the first in the first person's permissions)
     (
       people[0].permissions.commenter ||
       people[0].permissions.owner ||
@@ -116,12 +124,14 @@ export function showPeople(people, el) {
 /**
  * @param {HTMLElement} personEl
  * @param {PersonWithPermissions} person
+ * @param {Role | undefined} [selectedRole]
+ * @param {HTMLElement} [roleEl]
  */
-function showFilesByPerson(personEl, person) {
+function showFilesByPerson(personEl, person, selectedRole, roleEl) {
   /** @type {Set<FileInTree>} */
   const allFiles = new Set();
 
-  for (const role of ROLES) {
+  for (const role of selectedRole ? [selectedRole] : ROLES) {
     if (person.permissions[role]) {
       person.permissions[role].forEach((f) => allFiles.add(f));
     }
@@ -139,4 +149,5 @@ function showFilesByPerson(personEl, person) {
   }
 
   personEl.classList.add('selected');
+  if (selectedRole) roleEl.classList.add('selected');
 }
