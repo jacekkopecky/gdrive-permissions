@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "lint": "prettier -c . && eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
+  "type": "module",
   "dependencies": {
     "@types/gapi": "^0.0.47",
     "@types/gapi.auth2": "^0.0.61",
@@ -18,6 +20,7 @@
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.27.1",
     "eslint": "^9.30.1",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "prettier": "^3.6.2"
   }
