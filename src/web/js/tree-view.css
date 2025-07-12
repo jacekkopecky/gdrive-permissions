@@ -14,7 +14,7 @@ ul.tree-view {
     }
 
     &.folder {
-      list-style-type: ' – ';
+      list-style-type: ' – 📂 ';
 
       & > .name > span {
         cursor: pointer;
@@ -25,7 +25,7 @@ ul.tree-view {
       }
 
       &.collapsed {
-        list-style-type: ' + ';
+        list-style-type: ' + 📂 ';
 
         & > ul {
           display: none;
