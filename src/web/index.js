@@ -25,4 +25,8 @@ showTree(tree, document.querySelector('#files'));
 
 const people = getPeopleWithPermissions(tree);
 
-showPeople(people, document.querySelector('#permissions'));
+showPeople(
+  people,
+  document.querySelector('#permissions'),
+  document.querySelector('#files .for-selected'),
+);

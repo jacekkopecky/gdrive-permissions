@@ -9,6 +9,12 @@ document.adoptedStyleSheets.push(styles);
 import { treeIterator } from './tree-view.js';
 
 const ROLES = /** @type {const} */ (['reader', 'commenter', 'writer', 'owner']);
+const ROLE_NAMES = /** @type {Record<Role, string>} */ {
+  reader: 'reader',
+  commenter: 'commenter',
+  writer: 'editor',
+  owner: 'owner',
+};
 
 /**
  * @param {FileInTree[]} files
@@ -53,8 +59,9 @@ export function getPeopleWithPermissions(files) {
 /**
  * @param {PersonWithPermissions[]} people
  * @param {HTMLElement} el
+ * @param {HTMLElement} indicatorEl
  */
-export function showPeople(people, el) {
+export function showPeople(people, el, indicatorEl) {
   const block = document.createElement('div');
   block.classList.add('people-list');
   el.append(block);
@@ -72,6 +79,7 @@ export function showPeople(people, el) {
         personEl.classList.contains('selected') && personEl.querySelector('.selected') == null;
       resetSelectedPerson();
       if (!wasAlreadySelected) showFilesByPerson(personEl, person);
+      toggleIndicator(!wasAlreadySelected);
     });
 
     personEl.append(emailEl);
@@ -82,7 +90,7 @@ export function showPeople(people, el) {
       personEl.append(roleEl);
 
       if (person.permissions[role]) {
-        roleEl.textContent = role;
+        roleEl.textContent = ROLE_NAMES[role];
         const countEl = document.createElement('span');
         countEl.textContent = String(person.permissions[role].size);
         roleEl.append(countEl);
@@ -91,6 +99,7 @@ export function showPeople(people, el) {
           const wasAlreadySelected = roleEl.classList.contains('selected');
           resetSelectedPerson();
           showFilesByPerson(personEl, person, wasAlreadySelected ? undefined : role, roleEl);
+          toggleIndicator(true);
           e.stopPropagation();
         });
       } else {
@@ -118,6 +127,13 @@ export function showPeople(people, el) {
       ?.values()
       .next()
       .value?.resetTreeVisibility();
+  }
+
+  /**
+   * @param {boolean | undefined} [selected]
+   */
+  function toggleIndicator(selected) {
+    indicatorEl.classList.toggle('selected', selected);
   }
 }
 
