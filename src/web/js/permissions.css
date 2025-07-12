@@ -1,5 +1,5 @@
 .people-list {
-  padding: 1em 0 0 1em;
+  padding-left: 1em;
   display: grid;
   grid-template-columns: repeat(5, auto);
   justify-content: start;
