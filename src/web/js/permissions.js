@@ -63,18 +63,24 @@ export function showPeople(people, el) {
 
     const emailEl = document.createElement('span');
     emailEl.textContent = person.isAnyoneWithLink ? 'Anyone with link' : person.emailAddress;
+    if (person.isAnyoneWithLink) emailEl.classList.add('anyone');
     // todo add click listener to span
 
     personEl.append(emailEl);
 
-    for (const role of ['reader', 'writer', 'owner', 'commenter']) {
+    for (const role of ['reader', 'commenter', 'writer', 'owner']) {
       const roleEl = document.createElement('span');
       roleEl.classList.add('role');
       personEl.append(roleEl);
 
       if (person.permissions[role]) {
         roleEl.textContent = role;
+        const countEl = document.createElement('span');
+        countEl.textContent = person.permissions[role].size;
+        roleEl.append(countEl);
         // todo add click listener to roleEl
+      } else {
+        roleEl.classList.add('disabled');
       }
     }
 

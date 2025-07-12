@@ -1,12 +1,22 @@
 <!doctype html>
 <html>
   <head>
-    <title>Drive API Quickstart</title>
+    <title>Drive Permissions Manager</title>
     <meta charset="utf-8" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    </style>
   </head>
   <body>
     <header>
-      <p>Drive API Quickstart</p>
+      <h1>Drive Permissions Manager</h1>
       <div style="display: flex; gap: 1em">
         <button id="btn_authorize" disabled>Authorize</button>
         <button id="btn_load" disabled>Load Files</button>
@@ -14,11 +24,11 @@
       </div>
     </header>
 
+    <div id="permissions">People with permissions:</div>
+    <div id="files">Files and folders:</div>
+
     <pre id="stats" style="white-space: pre-wrap"></pre>
     <pre id="errors" style="white-space: pre-wrap; color: #a00"></pre>
-
-    <div id="files">Files and folders:</div>
-    <div id="permissions">People with permissions:</div>
 
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
