@@ -8,18 +8,19 @@ ul.tree-view {
       display: none;
     }
 
-    &.visible-for-children > .name {
+    &.visible-for-children > .name > span {
+      font-style: italic;
       opacity: 0.5;
     }
 
     &.folder {
       list-style-type: ' – ';
 
-      & > .name {
+      & > .name > span {
         cursor: pointer;
       }
 
-      &:hover > span {
+      &:hover > .name {
         text-decoration: underline;
       }
 
@@ -30,6 +31,18 @@ ul.tree-view {
           display: none;
         }
       }
+    }
+
+    .name {
+      padding: 0.5em 1em 0.5em 0;
+    }
+
+    .name > a {
+      margin-left: 1em;
+    }
+
+    .name:not(:hover) > a {
+      visibility: hidden;
     }
   }
 }

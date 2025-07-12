@@ -17,13 +17,25 @@ export function showTree(tree, el, expand = true) {
 
   for (const file of tree) {
     const li = document.createElement('li');
+    const nameEl = document.createElement('span');
+    nameEl.classList.add('name');
+
     const span = document.createElement('span');
-    span.classList.add('name');
     span.textContent = file.name;
-    li.append(span);
+    nameEl.append(span);
+
+    li.append(nameEl);
     li.classList.toggle('collapsed', !expand);
     li.classList.toggle('folder', file.isFolder);
-    span.addEventListener('click', toggleCollapse);
+    span.addEventListener('click', (e) => toggleCollapse(e, li));
+
+    const link = document.createElement('a');
+    link.target = '_blank';
+    link.href = file.isFolder
+      ? `https://drive.google.com/drive/folders/${file.id}`
+      : `https://drive.google.com/file/d/${file.id}/view`;
+    link.textContent = 'view';
+    nameEl.append(link);
 
     ul.append(li);
     file.element = li;
@@ -38,9 +50,10 @@ export function showTree(tree, el, expand = true) {
 
 /**
  * @param {MouseEvent} e
+ * @param {HTMLElement} itemEl
  */
-function toggleCollapse(e) {
-  /** @type {HTMLElement} */ (e.currentTarget).parentElement.classList.toggle('collapsed');
+function toggleCollapse(e, itemEl) {
+  itemEl.classList.toggle('collapsed');
   e.preventDefault();
   e.stopPropagation();
   e.stopImmediatePropagation();
