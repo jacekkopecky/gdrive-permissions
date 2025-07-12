@@ -74,12 +74,13 @@ export function showPeople(people, el, indicatorEl) {
     emailEl.textContent = person.isAnyoneWithLink ? 'Anyone with link' : person.emailAddress;
     if (person.isAnyoneWithLink) emailEl.classList.add('anyone');
 
-    personEl.addEventListener('click', () => {
+    personEl.addEventListener('click', (e) => {
       const wasAlreadySelected =
         personEl.classList.contains('selected') && personEl.querySelector('.selected') == null;
       resetSelectedPerson();
       if (!wasAlreadySelected) showFilesByPerson(personEl, person);
       toggleIndicator(!wasAlreadySelected);
+      e.stopPropagation();
     });
 
     personEl.append(emailEl);
@@ -109,6 +110,8 @@ export function showPeople(people, el, indicatorEl) {
 
     block.append(personEl);
   }
+
+  block.addEventListener('click', resetSelectedPerson);
 
   return block;
 
