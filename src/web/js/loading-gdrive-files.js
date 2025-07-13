@@ -1,3 +1,7 @@
+/**
+ * @import {LoadedFile} from "./types"
+ */
+
 const statsEl = document.getElementById('stats');
 const errorsEl = document.getElementById('errors');
 
@@ -7,6 +11,9 @@ export function stop() {
   stopping = true;
 }
 
+/**
+ * @param {LoadedFile[]} files
+ */
 export async function loadFiles(files) {
   console.time('loadFiles');
   try {
@@ -43,6 +50,9 @@ export async function loadFiles(files) {
   console.timeEnd('loadFiles');
 }
 
+/**
+ * @param {string} dir
+ */
 async function loadFilesIn(dir) {
   try {
     let pageToken = undefined;
@@ -72,6 +82,9 @@ async function loadFilesIn(dir) {
   }
 }
 
+/**
+ * @param {LoadedFile[]} files
+ */
 export function printStats(files) {
   const knownFilesCount = files.length;
   const allFolders = files.filter((f) => f.isFolder);

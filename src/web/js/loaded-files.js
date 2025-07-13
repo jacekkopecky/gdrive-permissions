@@ -1,7 +1,7 @@
 import { maybeEnableButtons } from './buttons.js';
 
 /**
- * @import {LoadedFile, FileInTree} from "./types"
+ * @import {LoadedFile} from "./types"
  */
 
 export async function importLoadedFiles() {
@@ -21,6 +21,10 @@ export async function importLoadedFiles() {
   return files;
 }
 
+/**
+ * @param {string} root
+ * @param {LoadedFile[]} files
+ */
 export function addRoot(root, files) {
   files.push({
     isLoaded: false,
