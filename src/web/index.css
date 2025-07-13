@@ -1,0 +1,52 @@
+body {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  &:after {
+    content: ' ';
+    display: block;
+    height: 80vh;
+  }
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: normal;
+}
+
+.for-selected:not(.selected) {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+#root_input {
+  min-width: 40em;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1em 0;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+  }
+}
