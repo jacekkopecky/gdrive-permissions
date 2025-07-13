@@ -4,21 +4,28 @@ const state = {
   authorized: false,
 };
 
+const btnStop = document.querySelector(/** @type {"button"} */ ('#btn_stop'));
+const btnSaveNow = document.querySelector(/** @type {"button"} */ ('#btn_save_now'));
+const btnAuthorize = document.querySelector(/** @type {"button"} */ ('#btn_authorize'));
+const btnLoad = document.querySelector(/** @type {"button"} */ ('#btn_load'));
+
 /** @param {keyof typeof state} stateKeyDone */
 export function maybeEnableButtons(stateKeyDone) {
   state[stateKeyDone] = true;
 
   if (state.gapiInited) {
-    document.querySelector(/** @type {"button"} */ ('#btn_authorize')).disabled = false;
+    btnAuthorize.disabled = false;
   }
 
   if (state.gapiInited && state.loadedFiles && state.authorized) {
-    document.querySelector(/** @type {"button"} */ ('#btn_load')).disabled = false;
+    btnLoad.disabled = false;
+    btnSaveNow.disabled = false;
+  }
+
+  if (state.authorized) {
+    document.body.classList.add('authorized');
   }
 }
-
-const btnStop = document.querySelector(/** @type {"button"} */ ('#btn_stop'));
-const btnSaveNow = document.querySelector(/** @type {"button"} */ ('#btn_save_now'));
 
 export function toggleRunningButtons(running = false) {
   btnStop.disabled = !running;
