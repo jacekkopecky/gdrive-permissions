@@ -17,11 +17,12 @@ const rootInput = document.querySelector('#root_input');
 const filesSection = document.querySelector(/** @type {'div'} */ ('#files'));
 const permissionsSection = document.querySelector(/** @type {'div'} */ ('#permissions'));
 
-document.querySelector('#btn_load').addEventListener('click', () => {
+document.querySelector('#btn_load').addEventListener('click', async () => {
   toggleSections(false);
   if (rootInput.value && !loadedFiles.find((f) => f.id === rootInput.value))
     addRoot(rootInput.value, loadedFiles);
-  loadGdriveFiles(loadedFiles);
+  await loadGdriveFiles(loadedFiles);
+  showEverything();
 });
 document.querySelector('#btn_save_now').addEventListener('click', () => {
   saveFilesLocally(loadedFiles);
