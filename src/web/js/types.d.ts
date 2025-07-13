@@ -13,6 +13,7 @@ export type FileInTree = LoadedFile & {
   element?: HTMLElement;
   resetTreeVisibility(hide = false): void;
   showFile(): void;
+  currentPermission?: Permission;
 };
 
 export type Role = 'reader' | 'writer' | 'owner' | 'commenter';
@@ -23,12 +24,12 @@ export type Permission = {
   allowFileDiscovery?: boolean;
   emailAddress?: string;
   displayName?: string;
+  deleted?: boolean;
 };
 
 export type PersonWithPermissions = {
   id: string;
   isAnyoneWithLink: boolean;
-  displayName?: string;
   emailAddress?: string;
   permissions: {
     reader?: Set<FileInTree>;

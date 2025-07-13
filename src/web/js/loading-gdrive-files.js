@@ -45,6 +45,10 @@ export async function loadGdriveFiles(files) {
         files.push(
           ...filesInNext.map((f) => {
             const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+
+            // reset Permission.deleted in case the attribute comes from gdrive
+            f.permissions?.forEach((perm) => (perm.deleted = false));
+
             return {
               isLoaded: !isFolder,
               id: f.id,

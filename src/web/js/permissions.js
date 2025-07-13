@@ -29,8 +29,7 @@ export function getPeopleWithPermissions(files) {
           id: perm.id,
           isAnyoneWithLink: perm.id === 'anyoneWithLink',
           permissions: {},
-          displayName: perm.displayName,
-          emailAddress: perm.emailAddress,
+          emailAddress: perm.emailAddress || perm.displayName,
         };
 
       peopleById.set(perm.id, person);
@@ -162,6 +161,10 @@ function showFilesByPerson(personEl, person, selectedRole, roleEl) {
     if (!resetDone) {
       file.resetTreeVisibility(true);
       resetDone = true;
+    }
+
+    if (selectedRole && selectedRole !== 'owner') {
+      file.currentPermission = file.permissions.find((p) => p.id === person.id);
     }
 
     file.showFile();

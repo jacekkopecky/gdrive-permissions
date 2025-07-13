@@ -3,6 +3,7 @@ ul.tree-view {
 
   li {
     list-style-type: ' • ';
+    white-space: nowrap;
 
     &.hidden {
       display: none;
@@ -37,12 +38,34 @@ ul.tree-view {
       padding: 0.5em 1em 0.5em 0;
     }
 
-    .name > a {
+    .name > a,
+    .name > .delete {
       margin-left: 1em;
     }
 
-    .name:not(:hover) > a {
+    .name:not(:hover) > a,
+    .name:not(:hover)::after,
+    .name:not(:hover) > .delete {
       visibility: hidden;
+    }
+
+    body:not(.authorized) & > .name > .delete {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    &.deleted > .name > .delete,
+    &:not(.deletable) > .name > .delete {
+      display: none;
+    }
+
+    &.deleted > .name::after {
+      margin-left: 1em;
+      content: '(revoked)';
+    }
+
+    &.deleted > .name > span {
+      text-decoration: line-through;
     }
   }
 }

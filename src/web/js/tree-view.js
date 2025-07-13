@@ -2,6 +2,8 @@
  * @import {FileInTree, LoadedFile} from "./types"
  */
 
+import { deletePermission } from './loading-gdrive-files.js';
+
 // @ts-ignore
 import styles from './tree-view.css' with { type: 'css' };
 document.adoptedStyleSheets.push(styles);
@@ -36,6 +38,25 @@ export function showTree(tree, el, expand = true) {
       : `https://drive.google.com/file/d/${file.id}/view`;
     link.textContent = 'view';
     nameEl.append(link);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('delete');
+    deleteBtn.textContent = 'revoke';
+    deleteBtn.addEventListener('click', async () => {
+      if (file.currentPermission && !file.currentPermission.deleted) {
+        try {
+          await deletePermission({ fileId: file.id, permissionId: file.currentPermission.id });
+          file.currentPermission.deleted = true;
+          doShowFile(file);
+        } catch (e) {
+          console.warn('error deleting', e);
+          const btnDelete = file.element.querySelector(/** @type {"button"} */ ('.delete'));
+          btnDelete.disabled = true;
+          btnDelete.textContent = 'error, reload and authenticate please';
+        }
+      }
+    });
+    nameEl.append(deleteBtn);
 
     ul.append(li);
     file.element = li;
@@ -101,6 +122,7 @@ export function makeTree(loadedFiles) {
 
   function resetTreeVisibility(hide = false) {
     for (const file of treeIterator(tree)) {
+      file.currentPermission = undefined;
       doShowFile(file, hide);
     }
   }
@@ -118,8 +140,13 @@ export function makeTree(loadedFiles) {
  * @param {FileInTree} file
  */
 function doShowFile(file, hide = false) {
-  file.element?.classList.toggle('hidden', hide);
-  file.element?.classList.toggle('visible-for-children', false);
+  const el = file.element;
+  if (!el) return;
+
+  el.classList.toggle('hidden', hide);
+  el.classList.toggle('visible-for-children', false);
+  el.classList.toggle('deletable', Boolean(file.currentPermission) && !hide);
+  el.classList.toggle('deleted', Boolean(file.currentPermission?.deleted));
 }
 
 /**

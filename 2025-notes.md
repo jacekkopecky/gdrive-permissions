@@ -20,4 +20,4 @@
 - [x] save loaded files in localstorage
 - [x] disable Load button when not authorized
 - [x] rename loaded-files.js to local-storage.js
-- [ ] add a button to remove a given permission, or all permissions for a given user (and maybe selected permission)
+- [x] add a button to remove a given permission, or all permissions for a given user (and maybe selected permission)
