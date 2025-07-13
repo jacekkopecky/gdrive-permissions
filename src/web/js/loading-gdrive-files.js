@@ -1,5 +1,5 @@
 /**
- * @import {LoadedFile} from "./types"
+ * @import {FileInTree, LoadedFile, Permission} from "./types"
  */
 
 import { toggleRunningButtons } from './buttons.js';
@@ -114,4 +114,11 @@ export function printStats(files) {
 
   const remaining = `${pendingFoldersCount} of ${allFolders.length}`;
   statsEl.textContent += `loaded ${String(knownFilesCount - allFolders.length).padStart(4)} files, remaining ${remaining.padStart(10)} folders\n`;
+}
+
+/**
+ * @param {{fileId: string, permissionId: string}} perm
+ */
+export function deletePermission(perm) {
+  return gapi.client.drive.permissions.delete(perm);
 }
