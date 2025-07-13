@@ -1,32 +1,56 @@
 /* global gapi */
 
 import './js/gapi.js';
-import { importLoadedFiles, addRoot } from './js/loaded-files.js';
-import { printStats, loadFiles, stop } from './js/loading-gdrive-files.js';
+import { addRoot, importLocallySavedFiles, saveFilesLocally } from './js/local-storage.js';
+import { printStats, loadGdriveFiles, stop } from './js/loading-gdrive-files.js';
 import { getPeopleWithPermissions, showPeople } from './js/permissions.js';
 import { makeTree, showTree } from './js/tree-view.js';
 
-const ROOT = 'root-folder-gdrive-id';
+const loadedFiles = await importLocallySavedFiles();
 
-const loadedFiles = await importLoadedFiles();
+/** @type {HTMLElement | null} */
+let previousTree = null;
+let previousPeople = null;
 
-if (loadedFiles.length === 0) {
-  addRoot(ROOT, loadedFiles);
-}
+/** @type {HTMLInputElement} */
+const rootInput = document.querySelector('#root_input');
+const filesSection = document.querySelector(/** @type {'div'} */ ('#files'));
+const permissionsSection = document.querySelector(/** @type {'div'} */ ('#permissions'));
 
-printStats(loadedFiles);
-
-document.querySelector('#btn_load').addEventListener('click', () => loadFiles(loadedFiles));
+document.querySelector('#btn_load').addEventListener('click', () => {
+  toggleSections(false);
+  if (rootInput.value && !loadedFiles.find((f) => f.id === rootInput.value))
+    addRoot(rootInput.value, loadedFiles);
+  loadGdriveFiles(loadedFiles);
+});
+document.querySelector('#btn_save_now').addEventListener('click', () => {
+  saveFilesLocally(loadedFiles);
+});
 document.querySelector('#btn_stop').addEventListener('click', stop);
 
-const tree = makeTree(loadedFiles);
+if (loadedFiles.length > 0) showEverything();
 
-showTree(tree, document.querySelector('#files'));
+function showEverything() {
+  toggleSections(true);
 
-const people = getPeopleWithPermissions(tree);
+  printStats(loadedFiles);
 
-showPeople(
-  people,
-  document.querySelector('#permissions'),
-  document.querySelector('#files .for-selected'),
-);
+  const tree = makeTree(loadedFiles);
+
+  previousTree?.remove();
+  previousTree = showTree(tree, filesSection);
+
+  const people = getPeopleWithPermissions(tree);
+
+  previousPeople?.remove();
+  previousPeople = showPeople(
+    people,
+    permissionsSection,
+    document.querySelector('#files .for-selected'),
+  );
+}
+
+function toggleSections(show = false) {
+  filesSection.classList.toggle('hidden', !show);
+  permissionsSection.classList.toggle('hidden', !show);
+}

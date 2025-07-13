@@ -28,23 +28,56 @@
       .for-selected:not(.selected) {
         display: none;
       }
+      .hidden {
+        display: none;
+      }
+      #root_input {
+        min-width: 40em;
+      }
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        padding: 1em 0;
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 0;
+        }
+      }
     </style>
   </head>
   <body>
     <header>
       <h1>Drive Permissions Manager</h1>
-      <div style="display: flex; gap: 1em">
+      <div style="display: flex; gap: 1em; flex-wrap: wrap">
         <button id="btn_authorize" disabled>Authorize</button>
+        <input
+          id="root_input"
+          placeholder="ID of folder to load. It's in the URL after https://drive.google.com/drive/folders/"
+        />
         <button id="btn_load" disabled>Load Files</button>
         <button id="btn_stop" disabled>Stop</button>
       </div>
+      <div style="display: flex; gap: 1em; flex-wrap: wrap">
+        <label style="white-space: nowrap">
+          <input type="checkbox" id="save_checkbox" /> Save in browser (do not use on a shared
+          computer!)
+        </label>
+        <button id="btn_save_now" disabled>Save now</button>
+        <button id="btn_clear_storage" disabled>Clear local storage</button>
+      </div>
     </header>
 
-    <div id="permissions">
+    <div id="permissions" class="hidden">
       <h2>People with permissions:</h2>
       <h3>Select person or permission to filter files.</h3>
     </div>
-    <div id="files">
+    <div id="files" class="hidden">
       <h2>Files and folders<span class="for-selected"> for selected person/permission</span>:</h2>
     </div>
 

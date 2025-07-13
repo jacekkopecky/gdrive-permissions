@@ -2,29 +2,42 @@
  * @import {LoadedFile} from "./types"
  */
 
-const statsEl = document.getElementById('stats');
-const errorsEl = document.getElementById('errors');
+import { toggleRunningButtons } from './buttons.js';
+import { saveFilesLocally } from './local-storage.js';
 
-let stopping = false;
+const statsEl = document.querySelector('#stats');
+const errorsEl = document.querySelector('#errors');
+const saveCheckbox = document.querySelector(/** @type {'input'} */ ('#save_checkbox'));
+
+let running = false;
 
 export function stop() {
-  stopping = true;
+  running = false;
 }
 
 /**
  * @param {LoadedFile[]} files
  */
-export async function loadFiles(files) {
+export async function loadGdriveFiles(files) {
+  if (running) return;
+
+  statsEl.textContent += `started loading at ${new Date().toLocaleString()}\n`;
+
   console.time('loadFiles');
   try {
-    stopping = false;
+    running = true;
+    toggleRunningButtons(true);
+
+    const attempted = new Set();
 
     do {
       printStats(files);
-      const nextFolder = files.find((f) => f.isFolder && !f.isLoaded);
+      const nextFolder = files.find((f) => f.isFolder && !f.isLoaded && !attempted.has(f));
       if (!nextFolder) {
         break;
       }
+
+      attempted.add(nextFolder);
 
       const filesInNext = await loadFilesIn(nextFolder.id);
       if (filesInNext) {
@@ -43,10 +56,19 @@ export async function loadFiles(files) {
           }),
         );
       }
-    } while (!stopping);
+    } while (running);
   } catch (err) {
     errorsEl.textContent = err.message;
+    errorsEl.scrollIntoView();
   }
+
+  statsEl.textContent += `stopped loading at ${new Date().toLocaleString()}\n`;
+
+  if (saveCheckbox.checked) {
+    saveFilesLocally(files);
+  }
+
+  toggleRunningButtons(false);
   console.timeEnd('loadFiles');
 }
 
@@ -92,6 +114,4 @@ export function printStats(files) {
 
   const remaining = `${pendingFoldersCount} of ${allFolders.length}`;
   statsEl.textContent += `loaded ${String(knownFilesCount - allFolders.length).padStart(4)} files, remaining ${remaining.padStart(10)} folders\n`;
-
-  errorsEl.scrollIntoView({ behavior: 'instant' });
 }

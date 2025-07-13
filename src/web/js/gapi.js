@@ -7,7 +7,12 @@ const tokenClient = google.accounts.oauth2.initTokenClient({
   client_id: CLIENT_ID,
   scope: SCOPES,
   prompt: '',
-  callback: null, // assigned later
+  callback(resp) {
+    if (resp.error !== undefined) {
+      throw resp;
+    }
+    maybeEnableButtons('authorized');
+  },
 });
 
 gapi.load('client', initializeGapiClient);
@@ -17,17 +22,11 @@ async function initializeGapiClient() {
     apiKey: API_KEY,
     discoveryDocs: [DISCOVERY_DOC],
   });
-  maybeEnableButtons({ gapiInited: true });
+  maybeEnableButtons('gapiInited');
 }
 
 document.querySelector('#btn_authorize').addEventListener('click', handleAuthClick);
 function handleAuthClick() {
-  /** @type {any} */ (tokenClient).callback = (resp) => {
-    if (resp.error !== undefined) {
-      throw resp;
-    }
-  };
-
   const token = gapi.client.getToken();
   if (token == null) {
     tokenClient.requestAccessToken({ prompt: '' });

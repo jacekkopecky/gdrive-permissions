@@ -16,5 +16,8 @@
 - [x] link to files so we can see them in the folder, or the file itself?
   - https://drive.google.com/file/d/FILE_ID/view ?
   - https://drive.google.com/drive/folders/FOLDER_ID
+- [x] make the ROOT configurable in an input box
+- [x] save loaded files in localstorage
+- [x] disable Load button when not authorized
+- [x] rename loaded-files.js to local-storage.js
 - [ ] add a button to remove a given permission, or all permissions for a given user (and maybe selected permission)
-- [ ] make the ROOT configurable in an input box
