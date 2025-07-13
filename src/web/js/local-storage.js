@@ -9,6 +9,7 @@ const LOCAL_STORAGE_FILES_KEY = 'gdrive-permissions-loaded-files';
 const LOCAL_STORAGE_WHEN_KEY = 'gdrive-permissions-loaded-files-when';
 
 const statsEl = document.querySelector('#stats');
+const saveCheckbox = document.querySelector(/** @type {'input'} */ ('#save_checkbox'));
 const btnClearStorage = document.querySelector(/** @type {"button"} */ ('#btn_clear_storage'));
 btnClearStorage.disabled = !(LOCAL_STORAGE_FILES_KEY in localStorage);
 btnClearStorage.addEventListener('click', () => {
@@ -28,6 +29,7 @@ export async function importLocallySavedFiles() {
       files = await decompressFromLocalStorage(LOCAL_STORAGE_FILES_KEY);
       const when = localStorage.getItem(LOCAL_STORAGE_WHEN_KEY);
       statsEl.textContent += `loaded ${files.length} records previously stored in the browser on ${when}\n`;
+      saveCheckbox.checked = true;
     }
   } catch {
     // swallow any exception
