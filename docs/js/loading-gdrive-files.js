@@ -1,3 +1,5 @@
+/* global gapi */
+
 /**
  * @import {FileInTree, LoadedFile, Permission} from "./types"
  */

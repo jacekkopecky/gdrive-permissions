@@ -1,5 +1,3 @@
-/* global gapi */
-
 import './js/gapi.js';
 import { addRoot, importLocallySavedFiles, saveFilesLocally } from './js/local-storage.js';
 import { printStats, loadGdriveFiles, stop } from './js/loading-gdrive-files.js';
