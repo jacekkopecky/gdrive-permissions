@@ -5,7 +5,7 @@
 import { deletePermission } from './loading-gdrive-files.js';
 
 // @ts-ignore
-import styles from './tree-view.css' assert { type: 'css' };
+import styles from './tree-view.css' with { type: 'css' };
 document.adoptedStyleSheets.push(styles);
 
 /**

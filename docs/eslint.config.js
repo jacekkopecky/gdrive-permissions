@@ -17,7 +17,7 @@ export default [
       parserOptions: {
         requireConfigFile: false, // Prevents needing a separate Babel config file
         babelOptions: {
-          plugins: ['@babel/plugin-syntax-import-assertions'], // Ensure the plugin is enabled
+          plugins: ['@babel/plugin-syntax-import-attributes'], // Ensure the plugin is enabled
         },
       },
     },

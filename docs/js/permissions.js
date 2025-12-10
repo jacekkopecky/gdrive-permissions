@@ -3,7 +3,7 @@
  */
 
 // @ts-ignore
-import styles from './permissions.css' assert { type: 'css' };
+import styles from './permissions.css' with { type: 'css' };
 document.adoptedStyleSheets.push(styles);
 
 import { treeIterator } from './tree-view.js';
