@@ -70,7 +70,7 @@ export function showPeople(people, el, indicatorEl) {
     personEl.classList.add('person');
 
     const emailEl = document.createElement('span');
-    emailEl.textContent = person.isAnyoneWithLink ? 'Anyone with link' : person.emailAddress;
+    emailEl.textContent = getDisplayName(person);
     if (person.isAnyoneWithLink) emailEl.classList.add('anyone');
 
     personEl.addEventListener('click', (e) => {
@@ -78,7 +78,7 @@ export function showPeople(people, el, indicatorEl) {
         personEl.classList.contains('selected') && personEl.querySelector('.selected') == null;
       resetSelectedPerson();
       if (!wasAlreadySelected) showFilesByPerson(personEl, person);
-      toggleIndicator(!wasAlreadySelected);
+      updatePersonIndicator(!wasAlreadySelected, person);
       e.stopPropagation();
     });
 
@@ -98,8 +98,9 @@ export function showPeople(people, el, indicatorEl) {
         roleEl.addEventListener('click', (e) => {
           const wasAlreadySelected = roleEl.classList.contains('selected');
           resetSelectedPerson();
-          showFilesByPerson(personEl, person, wasAlreadySelected ? undefined : role, roleEl);
-          toggleIndicator(true);
+          const roleToShow = wasAlreadySelected ? undefined : role;
+          showFilesByPerson(personEl, person, roleToShow, roleEl);
+          updatePersonIndicator(true, person, roleToShow);
           e.stopPropagation();
         });
       } else {
@@ -132,10 +133,15 @@ export function showPeople(people, el, indicatorEl) {
   }
 
   /**
-   * @param {boolean | undefined} [selected]
+   * @param {boolean | undefined} selected
+   * @param {PersonWithPermissions} person
+   * @param {ROLES[number]} [role]
    */
-  function toggleIndicator(selected) {
+  function updatePersonIndicator(selected, person, role) {
     indicatorEl.classList.toggle('selected', selected);
+
+    indicatorEl.textContent = ` for ${getDisplayName(person)}`;
+    if (role) indicatorEl.textContent += ` (${ROLE_NAMES[role]})`;
   }
 }
 
@@ -172,4 +178,11 @@ function showFilesByPerson(personEl, person, selectedRole, roleEl) {
 
   personEl.classList.add('selected');
   if (selectedRole) roleEl.classList.add('selected');
+}
+
+/**
+ * @param {PersonWithPermissions} person
+ */
+function getDisplayName(person) {
+  return person.isAnyoneWithLink ? 'Anyone with link' : person.emailAddress;
 }

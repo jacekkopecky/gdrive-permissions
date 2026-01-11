@@ -51,3 +51,11 @@
     }
   }
 }
+
+#files h2 {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+  padding: 1em 0;
+}
