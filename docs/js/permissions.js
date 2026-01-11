@@ -27,7 +27,7 @@ export function getPeopleWithPermissions(files) {
     for (const perm of file.permissions || []) {
       const /** @type {PersonWithPermissions} */ person = peopleById.get(perm.id) || {
           id: perm.id,
-          isAnyoneWithLink: perm.id === 'anyoneWithLink',
+          isAnyoneWithLink: perm.id.startsWith('anyone'),
           permissions: {},
           emailAddress: perm.emailAddress || perm.displayName || perm.id,
         };
@@ -184,5 +184,6 @@ function showFilesByPerson(personEl, person, selectedRole, roleEl) {
  * @param {PersonWithPermissions} person
  */
 function getDisplayName(person) {
-  return person.isAnyoneWithLink ? 'Anyone with link' : person.emailAddress;
+  if (!person.isAnyoneWithLink) return person.emailAddress;
+  return person.id === 'anyone' ? 'Public' : 'Anyone with the link';
 }
