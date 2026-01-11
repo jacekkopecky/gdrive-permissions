@@ -2,8 +2,9 @@
 
 - [x] make the view sticky so we always know whom, and what permission, we have selected
 - visual
-  - [ ] hide logs behind a button "show logs" while not loading
-  - [ ] scroll to bottom on every log addition
+  - [o] hide logs behind a button "show logs" while not loading
+    - replaced with making logs scrolling in a small container
+  - [x] scroll to bottom on every log addition
   - [ ] hide all other stuff when not authorized? change authorize to "log in"?
   - [ ] hide "authorize" when logged in? show who's logged in
   - [ ] change "view" link to "open document" or "open folder"
@@ -15,7 +16,8 @@
   - [ ] rephrase saving text to say save automatically?
   - [ ] show saved stuff only when logged in?
   - [ ] can we remember in local storage what has been revoked?
-  - [ ] hide "save" button when saving is ticked, make sure saving saves all the time when saving
+  - [ ] hide "save" button when saving is ticked
+  - [ ] make sure saving saves all the time when saving - when loading after every folder, if we can also record revocations, then after every revocation
 
 ## done by 2025-07-13
 

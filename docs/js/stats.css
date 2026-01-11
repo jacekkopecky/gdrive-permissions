@@ -1,0 +1,12 @@
+#stats {
+  padding: 0.5em;
+  border: solid thin grey;
+  white-space: pre-wrap;
+  height: 10em;
+  overflow-y: auto;
+}
+
+#errors {
+  white-space: pre-wrap;
+  color: #a00;
+}

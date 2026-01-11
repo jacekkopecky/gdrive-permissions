@@ -2,12 +2,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1em;
-
-  &:after {
-    content: ' ';
-    display: block;
-    height: 80vh;
-  }
 }
 
 h1 {

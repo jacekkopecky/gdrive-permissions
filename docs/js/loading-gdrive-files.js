@@ -1,14 +1,13 @@
 /* global gapi */
 
 /**
- * @import {FileInTree, LoadedFile, Permission} from "./types"
+ * @import {LoadedFile} from "./types"
  */
 
 import { toggleRunningButtons } from './buttons.js';
 import { saveFilesLocally } from './local-storage.js';
+import { logStat, logError } from './stats.js';
 
-const statsEl = document.querySelector('#stats');
-const errorsEl = document.querySelector('#errors');
 const saveCheckbox = document.querySelector(/** @type {'input'} */ ('#save_checkbox'));
 
 let running = false;
@@ -23,7 +22,7 @@ export function stop() {
 export async function loadGdriveFiles(files) {
   if (running) return;
 
-  statsEl.textContent += `started loading at ${new Date().toLocaleString()}\n`;
+  logStat(`started loading at ${new Date().toLocaleString()}`);
 
   console.time('loadFiles');
   try {
@@ -64,11 +63,10 @@ export async function loadGdriveFiles(files) {
       }
     } while (running);
   } catch (err) {
-    errorsEl.textContent = err.message;
-    errorsEl.scrollIntoView();
+    logError(err.message);
   }
 
-  statsEl.textContent += `stopped loading at ${new Date().toLocaleString()}\n`;
+  logStat(`stopped loading at ${new Date().toLocaleString()}`);
 
   if (saveCheckbox.checked) {
     saveFilesLocally(files);
@@ -105,7 +103,7 @@ async function loadFilesIn(dir) {
 
     return files;
   } catch (err) {
-    errorsEl.textContent = err.message;
+    logError(err.message);
     return;
   }
 }
@@ -119,7 +117,9 @@ export function printStats(files) {
   const pendingFoldersCount = allFolders.filter((f) => !f.isLoaded).length;
 
   const remaining = `${pendingFoldersCount} of ${allFolders.length}`;
-  statsEl.textContent += `loaded ${String(knownFilesCount - allFolders.length).padStart(4)} files, remaining ${remaining.padStart(10)} folders\n`;
+  logStat(
+    `loaded ${String(knownFilesCount - allFolders.length).padStart(4)} files, remaining ${remaining.padStart(10)} folders`,
+  );
 }
 
 /**
