@@ -1,15 +1,5 @@
 # Google Drive Permissions Manager in HTML
 
-- [x] make the view sticky so we always know whom, and what permission, we have selected
-- visual
-  - [o] hide logs behind a button "show logs" while not loading
-    - replaced with making logs scrolling in a small container
-  - [x] scroll to bottom on every log addition
-  - [x] hide all other stuff when not authorized?
-  - [x] change authorize to "log in"?
-  - [x] hide "authorize" when logged in?
-  - [/] show who's logged in (cannot, the info doesn't seem to be easily accessible)
-  - [ ] change "view" link to "open document" or "open folder"
 - functional
   - [ ] add a possibility to load all documents from the logged-in person's drive
     - document that it needs "root" or use that as default
@@ -20,6 +10,19 @@
   - [ ] can we remember in local storage what has been revoked?
   - [ ] hide "save" button when saving is ticked
   - [ ] make sure saving saves all the time when saving - when loading after every folder, if we can also record revocations, then after every revocation
+
+## done 2026-01-11
+
+- [x] make the view sticky so we always know whom, and what permission, we have selected
+- visual
+  - [o] hide logs behind a button "show logs" while not loading
+    - replaced with making logs scrolling in a small container
+  - [x] scroll to bottom on every log addition
+  - [x] hide all other stuff when not authorized?
+  - [x] change authorize to "log in"?
+  - [x] hide "authorize" when logged in?
+  - [/] show who's logged in (cannot, the info doesn't seem to be easily accessible)
+  - [x] change "view" link to "open document" or "open folder"
 
 ## done by 2025-07-13
 

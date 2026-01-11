@@ -36,7 +36,7 @@ export function showTree(tree, el, expand = true) {
     link.href = file.isFolder
       ? `https://drive.google.com/drive/folders/${file.id}`
       : `https://drive.google.com/file/d/${file.id}/view`;
-    link.textContent = 'view';
+    link.textContent = file.isFolder ? 'open folder' : 'open document';
     nameEl.append(link);
 
     const deleteBtn = document.createElement('button');
