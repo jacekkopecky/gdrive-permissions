@@ -29,7 +29,7 @@ export function getPeopleWithPermissions(files) {
           id: perm.id,
           isAnyoneWithLink: perm.id === 'anyoneWithLink',
           permissions: {},
-          emailAddress: perm.emailAddress || perm.displayName,
+          emailAddress: perm.emailAddress || perm.displayName || perm.id,
         };
 
       peopleById.set(perm.id, person);
