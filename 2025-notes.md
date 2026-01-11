@@ -1,8 +1,6 @@
 # Google Drive Permissions Manager in HTML
 
 - functional
-  - [ ] add a possibility to load all documents from the logged-in person's drive
-    - document that it needs "root" or use that as default
   - [ ] add a button to remove all of someone's selected permission from a whole folder
 - saving-related changes
   - [ ] rephrase saving text to say save automatically?
@@ -13,6 +11,10 @@
 
 ## done 2026-01-11
 
+- functional
+  - [x] add a possibility to load all documents from the logged-in person's drive
+    - document that it needs "root" or use that as default
+    - just added a default that if we don't have anything, load 'root'
 - [x] make the view sticky so we always know whom, and what permission, we have selected
 - visual
   - [o] hide logs behind a button "show logs" while not loading

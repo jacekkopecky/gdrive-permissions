@@ -17,8 +17,12 @@ const permissionsSection = document.querySelector(/** @type {'div'} */ ('#permis
 
 document.querySelector('#btn_load').addEventListener('click', async () => {
   toggleSections(false);
-  if (rootInput.value && !loadedFiles.find((f) => f.id === rootInput.value))
+  if (rootInput.value && !loadedFiles.find((f) => f.id === rootInput.value)) {
     addRoot(rootInput.value, loadedFiles);
+  }
+  if (loadedFiles.length === 0) {
+    addRoot('root', loadedFiles);
+  }
   await loadGdriveFiles(loadedFiles);
   showEverything();
 });
