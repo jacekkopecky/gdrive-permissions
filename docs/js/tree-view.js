@@ -23,6 +23,7 @@ export function showTree(tree, el, expand = true) {
     nameEl.classList.add('name');
 
     const span = document.createElement('span');
+    span.classList.add('name-span');
     span.textContent = file.name;
     nameEl.append(span);
 

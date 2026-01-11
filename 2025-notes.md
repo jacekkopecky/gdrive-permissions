@@ -17,6 +17,7 @@
     - just added a default that if we don't have anything, load 'root'
 - [x] make the view sticky so we always know whom, and what permission, we have selected
 - visual
+  - [x] clicking on +/- on a folder should also goggle expand
   - [o] hide logs behind a button "show logs" while not loading
     - replaced with making logs scrolling in a small container
   - [x] scroll to bottom on every log addition

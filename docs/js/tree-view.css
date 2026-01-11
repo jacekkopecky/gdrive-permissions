@@ -17,8 +17,12 @@ ul.tree-view {
     &.folder {
       list-style-type: ' – 📂 ';
 
-      & > .name > span {
+      & .name-span {
         cursor: pointer;
+        /* make the name extend leftward so it can be clicked
+           this is in lieu of making the bullet symbol clickable, which would be harder */
+        margin-left: -10em;
+        padding-left: 10em;
       }
 
       &:hover > .name {
