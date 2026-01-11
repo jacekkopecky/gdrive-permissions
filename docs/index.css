@@ -44,3 +44,15 @@ header {
     margin: 0;
   }
 }
+
+#btn_authorize {
+  align-self: start;
+}
+
+body:not(.authorized) .when-authorized {
+  display: none !important;
+}
+
+body.authorized .when-not-authorized {
+  display: none !important;
+}

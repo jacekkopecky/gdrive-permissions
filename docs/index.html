@@ -8,8 +8,8 @@
   <body>
     <header>
       <h1>Drive Permissions Manager</h1>
-      <div style="display: flex; gap: 1em; flex-wrap: wrap">
-        <button id="btn_authorize" disabled>Authorize</button>
+      <button id="btn_authorize" disabled class="when-not-authorized">Log in</button>
+      <div style="display: flex; gap: 1em; flex-wrap: wrap" class="when-authorized">
         <input
           id="root_input"
           placeholder="ID of folder to load. It's in the URL after https://drive.google.com/drive/folders/"
@@ -17,7 +17,7 @@
         <button id="btn_load" disabled>Load Files</button>
         <button id="btn_stop" disabled>Stop</button>
       </div>
-      <div style="display: flex; gap: 1em; flex-wrap: wrap">
+      <div style="display: flex; gap: 1em; flex-wrap: wrap" class="when-authorized">
         <label style="white-space: nowrap">
           <input type="checkbox" id="save_checkbox" /> Save in browser (do not use on a shared
           computer!)
@@ -27,16 +27,16 @@
       </div>
     </header>
 
-    <div id="permissions" class="hidden">
+    <div id="permissions" class="hidden when-authorized">
       <h2>People with permissions:</h2>
       <h3>Select person or permission to filter files.</h3>
     </div>
-    <div id="files" class="hidden">
+    <div id="files" class="hidden when-authorized">
       <h2>Files and folders<span class="for-selected"> for selected person/permission</span>:</h2>
     </div>
 
-    <pre id="stats">logs&#10;</pre>
-    <pre id="errors"></pre>
+    <pre id="stats" class="when-authorized">logs&#10;</pre>
+    <pre id="errors" class="when-authorized"></pre>
 
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>

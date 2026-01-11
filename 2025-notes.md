@@ -5,8 +5,10 @@
   - [o] hide logs behind a button "show logs" while not loading
     - replaced with making logs scrolling in a small container
   - [x] scroll to bottom on every log addition
-  - [ ] hide all other stuff when not authorized? change authorize to "log in"?
-  - [ ] hide "authorize" when logged in? show who's logged in
+  - [x] hide all other stuff when not authorized?
+  - [x] change authorize to "log in"?
+  - [x] hide "authorize" when logged in?
+  - [/] show who's logged in (cannot, the info doesn't seem to be easily accessible)
   - [ ] change "view" link to "open document" or "open folder"
 - functional
   - [ ] add a possibility to load all documents from the logged-in person's drive
