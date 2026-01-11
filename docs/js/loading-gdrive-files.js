@@ -60,6 +60,10 @@ export async function loadGdriveFiles(files) {
             };
           }),
         );
+
+        if (saveCheckbox.checked) {
+          saveFilesLocally(files, false);
+        }
       }
     } while (running);
   } catch (err) {

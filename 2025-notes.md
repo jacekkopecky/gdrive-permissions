@@ -1,13 +1,14 @@
 # Google Drive Permissions Manager in HTML
 
 - functional
-  - [ ] add a button to remove all of someone's selected permission from a whole folder
+  - [ ] add a button to remove all of someone's selected permission from a whole folder, or all permissions?
 - saving-related changes
   - [ ] rephrase saving text to say save automatically?
-  - [ ] show saved stuff only when logged in?
   - [ ] can we remember in local storage what has been revoked?
   - [ ] hide "save" button when saving is ticked
-  - [ ] make sure saving saves all the time when saving - when loading after every folder, if we can also record revocations, then after every revocation
+  - make sure saving saves all the time when saving
+    - [x] when loading after every folder,
+    - [ ] if we can also record revocations, then after every revocation
 
 ## done 2026-01-11
 

@@ -58,10 +58,15 @@ export function addRoot(root, files) {
   });
 }
 
-/** @param {LoadedFile[]} files */
-export async function saveFilesLocally(files) {
+/**
+ * @param {LoadedFile[]} files
+ * @param {boolean} [logged]
+ */
+export async function saveFilesLocally(files, logged = true) {
   await compressToLocalStorage(LOCAL_STORAGE_FILES_KEY, files);
   const when = new Date().toLocaleString();
   localStorage.setItem(LOCAL_STORAGE_WHEN_KEY, when);
-  logStat(`saved ${files.length} records in the browser on ${when}`);
+  if (logged) {
+    logStat(`saved ${files.length} records in the browser on ${when}`);
+  }
 }
